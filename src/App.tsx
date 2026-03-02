@@ -6,11 +6,11 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { Navbar } from './components/layout/Navbar';
 
 import { Login } from './pages/Login';
+import { DynamicPage } from './pages/DynamicPage';
 
 
 // Заглушки
 const Home = () => <Box p={10}>Главная (В разработке)</Box>;
-const DynamicPage = () => <Box p={10}>Страница (В разработке)</Box>;
 
 function App() {
   return (
