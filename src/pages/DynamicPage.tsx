@@ -23,7 +23,7 @@ import {
 } from '../features/core/api';
 
 // Типы категорий
-const CategoryLinks = ({ id }: { id: string }) => <Box>Links for {id}</Box>;
+import { CategoryLinks } from '../components/dynamic/CategoryLinks';
 const CategoryCards = ({ id }: { id: string }) => <Box>Cards for {id}</Box>;
 const CategoryAudio = ({ id }: { id: string }) => <Box>Audio for {id}</Box>;
 const CategoryGen = ({ id }: { id: string }) => <Box>Gen for {id}</Box>;
