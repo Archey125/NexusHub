@@ -24,9 +24,9 @@ import {
 
 // Типы категорий
 import { CategoryLinks } from '../components/dynamic/CategoryLinks';
+import { CategoryGen } from '../components/dynamic/CategoryGen';
 const CategoryCards = ({ id }: { id: string }) => <Box>Cards for {id}</Box>;
 const CategoryAudio = ({ id }: { id: string }) => <Box>Audio for {id}</Box>;
-const CategoryGen = ({ id }: { id: string }) => <Box>Gen for {id}</Box>;
 
 const CONTENT_TYPES = [
   { value: 'links', label: 'Ссылки' },
