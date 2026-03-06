@@ -8,6 +8,8 @@ import { Navbar } from './components/layout/Navbar';
 import { Login } from './pages/Login';
 import { DynamicPage } from './pages/DynamicPage';
 
+import { GlobalPlayer } from './components/common/GlobalPlayer';
+
 
 // Заглушки
 const Home = () => <Box p={10}>Главная (В разработке)</Box>;
@@ -20,14 +22,14 @@ function App() {
           {/* Навбар */}
           <Navbar /> 
           
-          <Box pt={4}>
+          <Box pt={4} pb="100px">
             <Routes>
               {/* Логин */}
               <Route path="/login" element={
                 <Login />
               } />
               
-              {/* Домашняя страницы */}
+              {/* Домашняя страница */}
               <Route path="/" element={
                 <ProtectedRoute><Home /></ProtectedRoute>
               } />
@@ -38,6 +40,10 @@ function App() {
               } />
             </Routes>
           </Box>
+          
+          {/* Плеер */}
+          <GlobalPlayer />
+
         </BrowserRouter>
       </AuthProvider>
     </ChakraProvider>
