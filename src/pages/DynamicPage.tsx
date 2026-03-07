@@ -12,7 +12,6 @@ import { useState, useEffect } from 'react';
 
 import { SortableCategoryItem } from '../components/dynamic/SortableCategoryItem';
 
-// DnD
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
@@ -43,7 +42,6 @@ export const DynamicPage = () => {
 
   const [selectedCatId, setSelectedCatId] = useState<string | null>(null);
 
-  // состояния
   const { isOpen: isPageSettingsOpen, onOpen: onPageSettingsOpen, onClose: onPageSettingsClose } = useDisclosure();
   const [pageTitleEdit, setPageTitleEdit] = useState('');
 
@@ -66,7 +64,6 @@ export const DynamicPage = () => {
   useEffect(() => {
     if (serverCategories) {
        setCategories(serverCategories);
-       // Если категория не выбрана, выбираем первую
        if (!selectedCatId && serverCategories.length > 0) {
           setSelectedCatId(serverCategories[0].id);
        }
@@ -160,7 +157,7 @@ export const DynamicPage = () => {
              {/* DND список */}
              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                <SortableContext items={categories.map(c => c.id)} strategy={verticalListSortingStrategy}>
-                  <VStack spacing={1} align="stretch">
+                  <VStack spacing={1} align="stretch" overflow="hidden" height="100%">
                      {categories.map(cat => (
                         <SortableCategoryItem 
                            key={cat.id} 

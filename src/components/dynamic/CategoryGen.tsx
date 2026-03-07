@@ -24,13 +24,11 @@ export const CategoryGen = ({ id }: { id: string }) => {
   const [newType, setNewType] = useState<'custom' | 'number'>('custom');
   const [isAdding, setIsAdding] = useState(false);
 
-  // 1. Грузим генераторы
   const { data: serverGenerators, isLoading } = useQuery({ 
     queryKey: ['generators', id], 
     queryFn: () => getGenerators(id) 
   });
 
-  // 2. Локальный стейт (с фиксом useEffect)
   const [generators, setGenerators] = useState<any[]>([]);
   
   useEffect(() => {
@@ -42,7 +40,6 @@ export const CategoryGen = ({ id }: { id: string }) => {
     }
   }, [serverGenerators]);
 
-  // 3. Мутации
   const createMutation = useMutation({
     mutationFn: () => createGenerator(id, newTitle, newType),
     onSuccess: () => {
@@ -54,7 +51,6 @@ export const CategoryGen = ({ id }: { id: string }) => {
 
   const reorderMutation = useMutation({ mutationFn: updateGeneratorsOrder });
 
-  // 4. DnD
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -93,10 +89,9 @@ export const CategoryGen = ({ id }: { id: string }) => {
       {/* СЕТКА */}
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={generators.map(g => g.id)} strategy={rectSortingStrategy}>
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4} overflow="hidden">
               {generators.map(gen => (
                 <SortableItem key={gen.id} id={gen.id}>
-                    {/* Обертка Box не нужна, если кнопки управления внутри карточки */}
                     {gen.type === 'number' 
                       ? <NumberGeneratorCard generator={gen} />
                       : <GeneratorCard generator={gen} />

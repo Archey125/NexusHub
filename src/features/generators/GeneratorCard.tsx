@@ -18,15 +18,12 @@ export const GeneratorCard = ({ generator }: Props) => {
   const bg = useColorModeValue('white', 'gray.700');
   const queryClient = useQueryClient();
   
-  // Состояния
   const [result, setResult] = useState<string | null>(null);
   const [isSpinning, setIsSpinning] = useState(false);
   
-  // Редактирование
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [optionsText, setOptionsText] = useState(generator.options?.join('\n') || '');
 
-  // Мутации
   const deleteMutation = useMutation({
     mutationFn: deleteGenerator,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['generators'] })

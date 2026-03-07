@@ -48,7 +48,6 @@ export const NumberGeneratorCard = ({ generator }: Props) => {
   };
 
   const handleBlur = () => {
-     // Сохраняем настройки в базу, когда пользователь закончил ввод
      updateMutation.mutate([min, max]);
   };
 

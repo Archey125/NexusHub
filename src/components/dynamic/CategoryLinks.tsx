@@ -1,8 +1,7 @@
 import { 
-  Box, Button, Input, SimpleGrid, useToast, useDisclosure, Text,
+  Box, Button, Input, SimpleGrid, useToast, useDisclosure,
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, VStack, FormControl, FormLabel, Spinner,
 } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import { useThemeStore } from '../../store/themeStore';
@@ -16,13 +15,14 @@ import { SortableItem } from '../common/SortableItem';
 
 // компонент ссылок
 import { LinkCard } from '../../features/browser/LinkCard';
+import { AddLink } from '../../features/browser/AddLink';
 
 export const CategoryLinks = ({ id }: { id: string }) => {
   const { accentColor } = useThemeStore();
   const toast = useToast();
   const queryClient = useQueryClient();
 
-  // состояния для модалки
+  // для модалки
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [editingLink, setEditingLink] = useState<LinkItem | null>(null); // если null - создание, иначе - редактирование
   const [title, setTitle] = useState('');
@@ -38,7 +38,7 @@ export const CategoryLinks = ({ id }: { id: string }) => {
   const [links, setLinks] = useState<LinkItem[]>([]);
   useEffect(() => {
     if (serverLinks) {
-      // от ошибки sync setState warning
+
       const timeoutId = setTimeout(() => {
         setLinks((prev) => {
           if (JSON.stringify(prev) === JSON.stringify(serverLinks)) return prev;
@@ -96,7 +96,7 @@ export const CategoryLinks = ({ id }: { id: string }) => {
     else createMutation.mutate();
   };
 
-  // DnD сенсоры
+  // DnD
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -114,7 +114,7 @@ export const CategoryLinks = ({ id }: { id: string }) => {
     <Box>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={links.map(l => l.id)} strategy={rectSortingStrategy}>
-           <SimpleGrid columns={{ base: 2, md: 3, lg: 4, xl: 6 }} spacing={4}>
+           <SimpleGrid columns={{ base: 2, md: 3, lg: 4, xl: 6 }} spacing={4} overflow="hidden" height="100%">
               {/* Список ссылок */}
               {links.map(link => (
                  <SortableItem key={link.id} id={link.id}>
@@ -125,20 +125,8 @@ export const CategoryLinks = ({ id }: { id: string }) => {
                     />
                  </SortableItem>
               ))}
-
               {/* Кнопка-плитка "Добавить" */}
-              <Button 
-                h="100%" minH="100px" variant="outline" borderStyle="dashed"
-                onClick={handleOpenCreate} flexDirection="column" gap={2}
-                borderColor={`${accentColor}.300`} 
-                color={`${accentColor}.300`}
-                _hover={{ borderColor: `${accentColor}.500`, color: `${accentColor}.500`}}
-                _dark={{_hover: { borderColor: `${accentColor}.200`, color: `${accentColor}.200`} }}
-              >
-                <AddIcon />
-                <Text fontSize="xs">Добавить</Text>
-              </Button>
-
+              <AddLink handleOpenCreate={handleOpenCreate}/>
            </SimpleGrid>
         </SortableContext>
       </DndContext>
