@@ -9,6 +9,7 @@ import { Login } from './pages/Login';
 import { DynamicPage } from './pages/DynamicPage';
 
 import { GlobalPlayer } from './components/common/GlobalPlayer';
+import { CardEditor } from './pages/CardEditor';
 
 
 // Заглушки
@@ -38,12 +39,16 @@ function App() {
               <Route path="/page/:pageId" element={
                 <ProtectedRoute><DynamicPage /></ProtectedRoute>
               } />
+
+              {/* Редактор карточки */}
+              <Route path="/card/:cardId" element={
+                <ProtectedRoute><CardEditor /></ProtectedRoute>
+              } />
             </Routes>
           </Box>
           
           {/* Плеер */}
           <GlobalPlayer />
-
         </BrowserRouter>
       </AuthProvider>
     </ChakraProvider>

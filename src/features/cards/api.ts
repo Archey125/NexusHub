@@ -37,11 +37,6 @@ export const createCard = async (categoryId: string, title: string) => {
   return data;
 };
 
-export const deleteCard = async (id: string) => {
-  const { error } = await supabase.from('cards').delete().eq('id', id);
-  if (error) throw error;
-};
-
 export const updateCardsOrder = async (items: { id: string; sort_order: number }[]) => {
   const { error } = await supabase.rpc('reorder_cards', { items });
   if (error) throw error;

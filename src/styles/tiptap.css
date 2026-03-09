@@ -1,0 +1,35 @@
+/* Контейнер редактора */
+.ProseMirror {
+  outline: none;
+  min-height: 300px;
+  padding: 1rem;
+  line-height: 1.75;
+  font-size: 1.1rem;
+}
+
+/* Заголовки */
+.ProseMirror h1 { font-size: 2.5em; font-weight: 800; margin-top: 1.5em; margin-bottom: 0.5em; line-height: 1.1; }
+.ProseMirror h2 { font-size: 1.75em; font-weight: 700; margin-top: 1.5em; margin-bottom: 0.5em; }
+.ProseMirror h3 { font-size: 1.4em; font-weight: 600; margin-top: 1em; margin-bottom: 0.5em; }
+
+/* Списки */
+.ProseMirror ul, .ProseMirror ol { padding: 0 1rem; margin: 1rem 1rem; }
+.ProseMirror li { margin-bottom: 0.5em; }
+
+/* Цитаты */
+.ProseMirror blockquote {
+  border-left: 4px solid #CBD5E0;
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: #718096;
+}
+
+/* Placeholder */
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
