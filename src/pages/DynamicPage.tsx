@@ -1,12 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Box, Button, Container, Flex, Heading, IconButton, Spinner, Text, useDisclosure, 
-  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, Select, VStack, HStack
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, Select, VStack,
 } from '@chakra-ui/react';
-import { AddIcon, EditIcon, DeleteIcon, SettingsIcon } from '@chakra-ui/icons';
+import { AddIcon, DeleteIcon, SettingsIcon } from '@chakra-ui/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 
@@ -25,7 +24,7 @@ import {
 import { CategoryLinks } from '../components/dynamic/CategoryLinks';
 import { CategoryGen } from '../components/dynamic/CategoryGen';
 import { CategoryAudio } from '../components/dynamic/CategoryAudio';
-const CategoryCards = ({ id }: { id: string }) => <Box>Cards for {id}</Box>;
+import { CategoryCards } from '../components/dynamic/CategoryCards';
 
 const CONTENT_TYPES = [
   { value: 'links', label: 'Ссылки' },
@@ -63,10 +62,10 @@ export const DynamicPage = () => {
   const [categories, setCategories] = useState<any[]>([]);
   useEffect(() => {
     if (serverCategories) {
-       setCategories(serverCategories);
-       if (!selectedCatId && serverCategories.length > 0) {
-          setSelectedCatId(serverCategories[0].id);
-       }
+        const timeout = setTimeout(() => {
+            setCategories(prev => JSON.stringify(prev) === JSON.stringify(serverCategories) ? prev : serverCategories);
+        }, 0);
+        return () => clearTimeout(timeout);
     }
   }, [serverCategories]);
 
