@@ -9,9 +9,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect, useRef } from 'react';
 
 // API
-import { uploadFileToStorage, deleteFileFromStorage } from '../lib/storage'; // Cloudinary
+import { deleteFileFromStorage } from '../lib/storage'; // Cloudinary
 import { useThemeStore } from '../store/themeStore';
-import { getCardFull, updateCard, deleteCardRecord} from '../features/editor/api';
+import { getCardFull, updateCard, uploadCardCover, deleteCardRecord} from '../features/editor/api';
+import { extractFileUrls, processContentAndUpload } from '../features/editor/utils';
+import { useCardStore } from '../store/cardStore';
 
 // TipTap
 import { useEditor, EditorContent } from '@tiptap/react';
@@ -20,6 +22,11 @@ import Placeholder from '@tiptap/extension-placeholder';
 import TextAlign from '@tiptap/extension-text-align';
 import Link from '@tiptap/extension-link';
 import { MenuBar } from '../features/editor/components/MenuBar';
+import { SpoilerMark } from '../features/editor/extensions/SpoilerMark';
+
+//Медиа блоки
+import { ImageNode } from '../features/editor/extensions/ImageNode';
+import { GalleryNode } from '../features/editor/extensions/GalleryNode';
 
 export const CardEditor = () => {
   const { cardId } = useParams<{ cardId: string }>();
@@ -43,6 +50,7 @@ export const CardEditor = () => {
     enabled: !!cardId,
   });
 
+  // заполнение метаданных при загрузке
   useEffect(() => {
     if (card) {
       setTitle(card.title);
@@ -51,12 +59,56 @@ export const CardEditor = () => {
     }
   }, [card]);
 
+  // обработчик клика по спойлеру
+  useEffect(() => {
+    const handleSpoilerClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.classList.contains('spoiler-blur')) {
+        target.classList.remove('spoiler-blur');
+        target.classList.add('spoiler-visible');
+      } else if (target.classList.contains('spoiler-visible')) {
+         target.classList.add('spoiler-blur');
+         target.classList.remove('spoiler-visible');
+      }
+    };
+
+    document.addEventListener('click', handleSpoilerClick);
+    return () => document.removeEventListener('click', handleSpoilerClick);
+  }, []);
+
+  // стили ссылок под акцент
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .ProseMirror a {
+        color: var(--chakra-colors-${accentColor}-500) !important;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .ProseMirror a:hover {
+        background-color: var(--chakra-colors-${accentColor}-50);
+        color: var(--chakra-colors-${accentColor}-600) !important;
+      }
+      [data-theme='dark'] .ProseMirror a:hover {
+        background-color: var(--chakra-colors-${accentColor}-900);
+        color: var(--chakra-colors-${accentColor}-200) !important;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, [accentColor]);
+
   const editor = useEditor({
     extensions: [
       StarterKit,
       Placeholder.configure({ placeholder: 'Начните писать...' }),
       TextAlign.configure({ types: ['heading', 'paragraph', 'image'] }),
       Link.configure({ openOnClick: false, autolink: true }),
+      SpoilerMark,
+      ImageNode,
+      GalleryNode,
     ],
     content: '',
     editable: isEditMode,
@@ -91,22 +143,47 @@ export const CardEditor = () => {
     }
   });
 
-  const handleSave = () => {
-    const contentJson = editor?.getJSON();
-
-    const contentText = editor?.getText().slice(0, 200); 
-
-    updateMutation.mutate({
-      id: cardId!,
-      updates: {
-        title,
-        description,
-        background_image: coverUrl,
-        content_json: contentJson,
-        content_text: contentText, // текст для превью
-        updated_at: new Date().toISOString()
+  const handleSave = async () => {
+    setIsUploading(true);
+    try {
+      let contentJson = editor?.getJSON();
+      
+      // загрузка файлов blob
+      if (contentJson) {
+         contentJson = await processContentAndUpload(contentJson, cardId!); //ID для папки
       }
-    });
+
+      // очистка старых файлов
+      const oldContent = card?.content_json;
+      const oldFiles = extractFileUrls(oldContent);
+      const newFiles = extractFileUrls(contentJson);
+      const filesToDelete = oldFiles.filter(url => !newFiles.includes(url));
+      
+      if (filesToDelete.length > 0) {
+         Promise.all(filesToDelete.map(url => deleteFileFromStorage(url))).catch(console.error);
+      }
+
+      useCardStore.getState().clearFiles(); // очищаем стор blob
+
+      const contentText = editor?.getText().slice(0, 200); //бд
+      
+      updateMutation.mutate({
+        id: cardId!,
+        updates: {
+          title,
+          description,
+          background_image: coverUrl,
+          content_json: contentJson,
+          content_text: contentText,
+          updated_at: new Date().toISOString()
+        }
+      });
+
+    } catch (error: any) {
+      toast({ title: 'Ошибка сохранения', description: error.message, status: 'error' });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleDeleteCard = async () => {
@@ -139,7 +216,7 @@ export const CardEditor = () => {
     setIsUploading(true);
     try {
       // Грузим новую
-      const url = await uploadFileToStorage(file, 'covers');
+      const url = await uploadCardCover(file, cardId!);
       // Удаляем старую (если была)
       if (coverUrl) await deleteFileFromStorage(coverUrl);
       

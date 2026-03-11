@@ -3,7 +3,7 @@ import { supabase } from './supabase';
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_PRESET;
 
-export const uploadFileToStorage = async (file: File, folder: string) => {
+export const uploadFileToStorage = async (file: File, path: string) => {
   const user = (await supabase.auth.getUser()).data.user;
   if (!user) throw new Error('Unauthorized');
 
@@ -12,7 +12,7 @@ export const uploadFileToStorage = async (file: File, folder: string) => {
   formData.append('upload_preset', UPLOAD_PRESET);
   
   // Папка: nexushub / user_id / folder_name
-  const fullPath = `nexushub/${user.id}/${folder}`;
+  const fullPath = `nexushub/${user.id}/${path}`;
   formData.append('folder', fullPath);
 
   let resourceType = 'auto'; 

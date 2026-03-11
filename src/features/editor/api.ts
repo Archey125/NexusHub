@@ -17,13 +17,21 @@ export const updateCard = async ({ id, updates }: { id: string, updates: any }) 
   if (error) throw error;
 };
 
+// удаление записи карточки
 export const deleteCardRecord = async (id: string) => {
   const { error } = await supabase.from('cards').delete().eq('id', id);
   if (error) throw error;
 };
 
-export const uploadEditorFile = async (file: File) => {
-  return await uploadFileToStorage(file, 'editor_files');
+// обложка
+export const uploadCardCover = async (file: File, cardId: string) => {
+  // Путь: nexushub/user_id/cards/UUID/cardCover/
+  return await uploadFileToStorage(file, `cards/${cardId}/cardCover`);
+};
+
+// загрузка файлов (видео, картинки)
+export const uploadEditorFile = async (file: File, cardId: string) => {
+  return await uploadFileToStorage(file, `cards/${cardId}/cardFiles`);
 };
 
 export const deleteEditorFile = async (url: string) => {

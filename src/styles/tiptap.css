@@ -33,3 +33,25 @@
   height: 0;
   pointer-events: none;
 }
+
+/* Спойлер (размытый) */
+.spoiler-blur {
+  filter: blur(6px);
+  background-color: rgba(0,0,0,0.1);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: filter 0.3s;
+  user-select: none; /* без подсмотра выделением */
+}
+
+.spoiler-blur:hover {
+  filter: blur(4px); /* Чуть виднее при наведении */
+}
+
+/* Спойлер (открытый) */
+.spoiler-visible {
+  filter: blur(0);
+  background-color: rgba(255, 255, 0, 0.2); /* Подсветка */
+  cursor: text;
+  user-select: text;
+}
