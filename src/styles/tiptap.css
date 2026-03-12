@@ -55,3 +55,9 @@
   cursor: text;
   user-select: text;
 }
+
+
+.tiptap-editor-container {
+  max-width: 100vw;
+  overflow-x: hidden; /* Скрываем горизонтальный скролл */
+}

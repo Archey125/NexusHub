@@ -76,3 +76,14 @@ export const updateTracksOrder = async (items: { id: string; sort_order: number 
   const { error } = await supabase.rpc('reorder_tracks', { items });
   if (error) throw error;
 };
+
+// все треки
+export const getAllAudioCategories = async () => {
+  const { data, error } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('content_type', 'audio');
+  
+  if (error) throw error;
+  return data;
+};

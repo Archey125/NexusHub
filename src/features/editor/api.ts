@@ -37,3 +37,14 @@ export const uploadEditorFile = async (file: File, cardId: string) => {
 export const deleteEditorFile = async (url: string) => {
   return await deleteFileFromStorage(url);
 };
+
+// список карточек по ID (для карусели)
+export const getCardsByIds = async (ids: string[]) => {
+  if (!ids || ids.length === 0) return [];
+  const { data, error } = await supabase
+    .from('cards')
+    .select('id, title, background_image, description, category_id, sort_order, content_text')
+    .in('id', ids);
+  if (error) throw error;
+  return data;
+};

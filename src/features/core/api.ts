@@ -74,6 +74,17 @@ export const getCategories = async (pageId: string) => {
   return data as Category[];
 };
 
+// категории карточек (редактор)
+export const getAllCardCategories = async () => {
+  const { data, error } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('content_type', 'cards');
+  
+  if (error) throw error;
+  return data;
+};
+
 export const createCategory = async (pageId: string, title: string, type: string) => {
   const user = (await supabase.auth.getUser()).data.user;
   

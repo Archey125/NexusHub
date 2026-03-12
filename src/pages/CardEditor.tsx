@@ -27,6 +27,9 @@ import { SpoilerMark } from '../features/editor/extensions/SpoilerMark';
 //Медиа блоки
 import { ImageNode } from '../features/editor/extensions/ImageNode';
 import { GalleryNode } from '../features/editor/extensions/GalleryNode';
+import { VideoNode } from '../features/editor/extensions/VideoNode';
+import { AudioNode } from '../features/editor/extensions/AudioNode';
+import { CardCarouselNode } from '../features/editor/extensions/CardCarouselNode';
 
 export const CardEditor = () => {
   const { cardId } = useParams<{ cardId: string }>();
@@ -48,6 +51,28 @@ export const CardEditor = () => {
     queryKey: ['card', cardId],
     queryFn: () => getCardFull(cardId!),
     enabled: !!cardId,
+  });
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Placeholder.configure({ placeholder: 'Начните писать...' }),
+      TextAlign.configure({ types: ['heading', 'paragraph', 'image'] }),
+      Link.configure({ openOnClick: false, autolink: true }),
+      SpoilerMark,
+      ImageNode,
+      GalleryNode,
+      VideoNode,
+      AudioNode,
+      CardCarouselNode,
+    ],
+    content: '',
+    editable: isEditMode,
+    editorProps: {
+      attributes: {
+        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none',
+      },
+    },
   });
 
   // заполнение метаданных при загрузке
@@ -99,25 +124,6 @@ export const CardEditor = () => {
       document.head.removeChild(style);
     };
   }, [accentColor]);
-
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Placeholder.configure({ placeholder: 'Начните писать...' }),
-      TextAlign.configure({ types: ['heading', 'paragraph', 'image'] }),
-      Link.configure({ openOnClick: false, autolink: true }),
-      SpoilerMark,
-      ImageNode,
-      GalleryNode,
-    ],
-    content: '',
-    editable: isEditMode,
-    editorProps: {
-      attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none',
-      },
-    },
-  });
 
   // загрузка контента в редактор (JSON)
   useEffect(() => {
@@ -267,7 +273,7 @@ export const CardEditor = () => {
       </Flex>
 
       {/* Данные для карточки */}
-      <Grid templateColumns={{ base: '1fr', md: '300px 1fr' }} gap={8} mb={10}>
+      <Grid templateColumns={{ base: '1fr', md: '300px 1fr' }} gap={8} mb={10} mt={8}>
         {/* Обложка */}
         <GridItem>
           <AspectRatio ratio={2 / 3} w="100%">
@@ -275,13 +281,11 @@ export const CardEditor = () => {
                {coverUrl ? (
                  <Image src={coverUrl} w="100%" h="100%" objectFit="cover" />
                ) : (
-                 <Flex align="center" justify="center" h="100%" bg="gray.50" color="gray.400" flexDirection="column">
+                 <Flex align="center" justify="center" w="100%" h="100%" bg="gray.50" color="gray.400" flexDirection="column">
                     <Text>Нет обложки</Text>
                     {isEditMode && <Text fontSize="xs">(Вид заметки)</Text>}
                  </Flex>
                )}
-               
-               {isUploading && <Flex position="absolute" inset={0} bg="blackAlpha.600" align="center" justify="center"><Spinner color="white" /></Flex>}
                
                {isEditMode && !isUploading && (
                  <Flex position="absolute" inset={0} bg="blackAlpha.600" opacity={0} _groupHover={{ opacity: 1 }} transition="0.2s" align="center" justify="center" direction="column" gap={2}>
@@ -295,9 +299,10 @@ export const CardEditor = () => {
              </Box>
           </AspectRatio>
         </GridItem>
+
         {/* Текст и название */}    
         <GridItem>
-          <VStack align="stretch" spacing={4}>
+          <VStack align="stretch" spacing={4} width={{base: "90vw", sm: "100%"}}>
             {isEditMode ? (
               <>
                 <FormControl><FormLabel>Название</FormLabel><Input value={title} onChange={(e) => setTitle(e.target.value)} fontSize="2xl" fontWeight="bold" /></FormControl>
@@ -323,6 +328,20 @@ export const CardEditor = () => {
           <EditorContent editor={editor} />
         </Box>
       </Box>
+
+      {/* Глобальный спиннер сорхранения */}
+      {isUploading && (
+        <Flex 
+          position="fixed" top={0} left={0} right={0} bottom={0} 
+          bg="blackAlpha.600" backdropFilter="blur(4px)" 
+          zIndex={9999} 
+          align="center" justify="center" 
+          direction="column"
+        >
+           <Spinner size="xl" color="white" thickness="4px" speed="0.65s" />
+           <Text color="white" mt={4} fontWeight="bold" fontSize="lg">Сохранение...</Text>
+        </Flex>
+      )}
 
     </Box>
   );

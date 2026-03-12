@@ -7,7 +7,7 @@ import {
   FaUndo, FaRedo, FaLink, FaUnlink,
   FaQuoteRight,
   FaAlignLeft, FaAlignCenter, FaAlignRight,
-  FaImage, FaImages, //Иконки для сложных блоков
+  FaImage, FaImages, FaVideo, FaMusic, FaLayerGroup,//Иконки для сложных блоков
 } from 'react-icons/fa';
 
 interface Props {
@@ -87,7 +87,7 @@ export const MenuBar = ({ editor }: Props) => {
           <IconButton aria-label="quote" icon={<FaQuoteRight />} variant={isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()} />
         </ButtonGroup>
 
-        {/* РАЗДЕЛИТЕЛЬ И СПОЙЛЕР*/}
+        {/* РАЗДЕЛИТЕЛЬ, СПОЙЛЕР И ССЫЛКА*/}
         <ButtonGroup size="sm" isAttached variant="outline">
            <Tooltip label="Линия"><IconButton aria-label="hr" icon={<FaMinus />} onClick={() => editor.chain().focus().setHorizontalRule().run()} /></Tooltip>
 
@@ -127,6 +127,15 @@ export const MenuBar = ({ editor }: Props) => {
           </Tooltip>
           <Tooltip label="Галерея">
              <IconButton aria-label="gallery" icon={<FaImages />} onClick={() => editor.chain().focus().insertContent({ type: 'galleryBlock' }).run()} />
+          </Tooltip>
+          <Tooltip label="Аудио">
+             <IconButton aria-label="audio" icon={<FaMusic />} onClick={() => editor.chain().focus().insertContent({ type: 'audioBlock' }).run()} />
+          </Tooltip>
+          <Tooltip label="Видео">
+            <IconButton aria-label="video" icon={<FaVideo />} onClick={() => editor.chain().focus().insertContent({ type: 'videoBlock' }).run()} />
+          </Tooltip>
+          <Tooltip label="Связанные карточки">
+            <IconButton aria-label="cards" icon={<FaLayerGroup />} onClick={() => editor.chain().focus().insertContent({ type: 'cardCarouselBlock' }).run()} />
           </Tooltip>
         </ButtonGroup>
 
