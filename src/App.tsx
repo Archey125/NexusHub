@@ -13,7 +13,7 @@ import { CardEditor } from './pages/CardEditor';
 
 
 // Заглушки
-const Home = () => <Box p={10}>Главная (В разработке)</Box>;
+import { Home } from './pages/Home';
 
 function App() {
   return (

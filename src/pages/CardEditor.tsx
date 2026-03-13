@@ -196,13 +196,25 @@ export const CardEditor = () => {
     if (!confirm('Удалить карточку навсегда?')) return;
     setIsUploading(true);
     try {
-      // удаляем обложку (если есть)
+      // собираем файлы на удаление
+      const filesToDelete: string[] = [];
+
+       // обложка
       if (card.background_image) {
-         await deleteFileFromStorage(card.background_image);
+         filesToDelete.push(card.background_image);
+      }
+
+      // файлы из контента (картинки, видео, аудио)
+      if (card.content_json) {
+         const editorFiles = extractFileUrls(card.content_json);
+         filesToDelete.push(...editorFiles);
+      }
+
+      // параллельно удаляем файлы из облака
+      if (filesToDelete.length > 0) {
+         await Promise.all(filesToDelete.map(url => deleteFileFromStorage(url)));
       }
       
-      // TODO: в будущем будут файлы внутри текста, их тоже надо удалить
-
       // удаляем запись
       await deleteCardRecord(cardId!);
       
@@ -223,7 +235,7 @@ export const CardEditor = () => {
     try {
       // Грузим новую
       const url = await uploadCardCover(file, cardId!);
-      // Удаляем старую (если была)
+      // Удаляем старую
       if (coverUrl) await deleteFileFromStorage(coverUrl);
       
       setCoverUrl(url);
