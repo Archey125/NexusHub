@@ -7,7 +7,7 @@ import {
 import { useState, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useThemeStore } from '../../store/themeStore';
-import { useAuth } from './AuthProvider';
+import { useAuth } from '../auth/useAuth';
 
 interface Props {
   isOpen: boolean;
@@ -23,7 +23,7 @@ export const ProfileModal = ({ isOpen, onClose }: Props) => {
 
   // Для подтверждения удаления
   const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const cancelRef = useRef<any>();
+  const cancelRef = useRef<any>(null);
 
   // Смена пароля
   const handleUpdatePassword = async () => {

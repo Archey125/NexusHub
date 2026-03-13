@@ -1,15 +1,8 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import {useEffect, useState } from 'react';
+import { AuthContext } from './useAuth';
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../../lib/supabase';
 import { Center, Spinner } from '@chakra-ui/react';
-
-interface AuthContextType {
-  session: Session | null;
-  user: User | null;
-  signOut: () => void;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -32,7 +25,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signOut = () => supabase.auth.signOut();
+  const signOut = async () => {
+     await supabase.auth.signOut();
+  };
 
   if (loading) return <Center h="100vh"><Spinner size="xl" /></Center>;
 
@@ -41,10 +36,4 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) throw new Error('Пользователь должен быть авторизован');
-  return context;
 };

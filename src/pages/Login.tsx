@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from 'react';
 import { 
-  Box, Button, FormControl, FormLabel, Input, Stack, Heading, 
-  Text, useToast, Container, useColorModeValue, Link 
+  Box, Button, FormControl, FormLabel, Input, Stack, Heading, useToast, Container, useColorModeValue, Link 
 } from '@chakra-ui/react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';

@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { 
   Box, Flex, IconButton, Text, Slider, SliderTrack, SliderFilledTrack, SliderThumb, 
-  useColorModeValue, HStack, VStack, Tooltip, Collapse, useDisclosure,
+  useColorModeValue, HStack, VStack, useDisclosure,
 } from '@chakra-ui/react';
 import { 
-  FaPlay, FaPause, FaStepForward, FaStepBackward, FaRandom, FaRedo, FaRedoAlt, FaVolumeUp, FaVolumeMute, FaChevronUp, FaChevronDown
+  FaPlay, FaPause, FaStepForward, FaStepBackward, FaRandom, FaRedo, FaVolumeUp, FaVolumeMute, FaChevronUp, FaChevronDown
 } from 'react-icons/fa';
 import { MdRepeatOne } from 'react-icons/md';
 import { usePlayerStore } from '../../store/playerStore';

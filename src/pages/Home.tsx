@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaStickyNote, FaLayerGroup, FaDice, FaGlobe, FaPlay, FaPause, FaMusic } from 'react-icons/fa';
 
 import { supabase } from '../lib/supabase';
-import { useAuth } from '../components/auth/AuthProvider';
+import { useAuth } from '../components/auth/useAuth'
 import { useThemeStore } from '../store/themeStore';
 import { usePlayerStore } from '../store/playerStore'
 
