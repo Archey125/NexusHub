@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { 
   Box, Flex, Button, HStack, IconButton, useColorMode, 
   Menu, MenuButton, MenuList, MenuItem, Text, Avatar, useDisclosure, 
@@ -10,7 +9,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { useThemeStore } from '../../store/themeStore';
-import { useAuth } from '../auth/AuthProvider';
+import { useAuth } from '../auth/useAuth';
 import { getPages, createPage } from '../../features/core/api';
 import { ProfileModal } from '../auth/ProfileModal'; 
 
