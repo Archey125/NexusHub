@@ -89,9 +89,9 @@ export const MenuBar = ({ editor }: Props) => {
 
         {/* РАЗДЕЛИТЕЛЬ, СПОЙЛЕР И ССЫЛКА*/}
         <ButtonGroup size="sm" isAttached variant="outline">
-           <Tooltip label="Линия"><IconButton aria-label="hr" icon={<FaMinus />} onClick={() => editor.chain().focus().setHorizontalRule().run()} /></Tooltip>
+          <Tooltip label="Линия"><IconButton aria-label="hr" icon={<FaMinus />} onClick={() => editor.chain().focus().setHorizontalRule().run()} /></Tooltip>
 
-           <Tooltip label="Спойлер">
+          <Tooltip label="Спойлер">
             <IconButton 
               aria-label="spoiler" 
               icon={<FaEyeSlash />} 

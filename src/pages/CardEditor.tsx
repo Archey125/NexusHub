@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
-  Heading, Box, Button, Flex, Spinner, Text, Input, Textarea, 
+  Heading, Box, Button, Flex, Spinner, Text, Input,
   useToast, Image, Grid, GridItem, VStack, HStack, Switch, FormLabel, FormControl, AspectRatio, IconButton, Tooltip 
 } from '@chakra-ui/react';
 import { ArrowBackIcon, CheckIcon, AttachmentIcon, DeleteIcon } from '@chakra-ui/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 
 // API
 import { deleteFileFromStorage } from '../lib/storage'; // Cloudinary
@@ -23,6 +24,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import Link from '@tiptap/extension-link';
 import { MenuBar } from '../features/editor/components/MenuBar';
 import { SpoilerMark } from '../features/editor/extensions/SpoilerMark';
+import { TipTapMini } from '../features/editor/components/TipTapMini';
 
 //Медиа блоки
 import { ImageNode } from '../features/editor/extensions/ImageNode';
@@ -30,6 +32,11 @@ import { GalleryNode } from '../features/editor/extensions/GalleryNode';
 import { VideoNode } from '../features/editor/extensions/VideoNode';
 import { AudioNode } from '../features/editor/extensions/AudioNode';
 import { CardCarouselNode } from '../features/editor/extensions/CardCarouselNode';
+
+const slideVariants = {
+   hidden: { opacity: 0, y: -20 },
+   visible: { opacity: 1, y: 0, transition: { duration: 1.5 } }
+};
 
 export const CardEditor = () => {
   const { cardId } = useParams<{ cardId: string }>();
@@ -263,6 +270,7 @@ export const CardEditor = () => {
   if (!card) return <Box p={10}><Text>Карточка не найдена</Text></Box>;
 
   return (
+    <motion.div initial="hidden" animate="visible" variants={slideVariants}>
     <Box maxW="container.lg" mx="auto" p={4} pb={20}>
       
       {/* Хедер */}
@@ -314,16 +322,39 @@ export const CardEditor = () => {
 
         {/* Текст и название */}    
         <GridItem>
-          <VStack align="stretch" spacing={4} width={{base: "90vw", sm: "100%"}}>
+          <VStack align="stretch" spacing={4}>
             {isEditMode ? (
               <>
-                <FormControl><FormLabel>Название</FormLabel><Input value={title} onChange={(e) => setTitle(e.target.value)} fontSize="2xl" fontWeight="bold" /></FormControl>
-                <FormControl><FormLabel>Описание (на обороте)</FormLabel><Textarea value={description} onChange={(e) => setDescription(e.target.value)} h="200px" /></FormControl>
+                <FormControl>
+                  <FormLabel>Название</FormLabel>
+                  <Input value={title} onChange={(e) => setTitle(e.target.value)} fontSize="2xl" fontWeight="bold" />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Описание (на обороте)</FormLabel>
+                  <TipTapMini 
+                    content={description} 
+                    onChange={(html) => setDescription(html)} 
+                  />
+                </FormControl>
               </>
             ) : (
               <>
                 <Heading size="2xl">{title}</Heading>
-                {description && <Box p={4} bg="gray.50" _dark={{ bg: 'gray.700' }} borderRadius="md" borderLeft="4px solid" borderColor={`${accentColor}.500`}><Text fontStyle="italic" whiteSpace="pre-wrap">{description}</Text></Box>}
+                {description && (
+                <Box p={4} bg="gray.50" _dark={{ bg: 'gray.700' }} borderRadius="md" borderLeft="4px solid" borderColor={`${accentColor}.500`}>
+                  {/* Рендер HTML */}
+                  <Box
+                    fontStyle="italic" 
+                    whiteSpace="pre-wrap"
+                    className="prose prose-sm"
+                    dangerouslySetInnerHTML={{ __html: description }} 
+                    sx={{
+                      'ul': { paddingLeft: '1.2em', listStyleType: 'disc' },
+                      'li': { marginBottom: '0.2em' }
+                    }}
+                  />
+                </Box>
+            )}
               </>
             )}
           </VStack>
@@ -356,5 +387,6 @@ export const CardEditor = () => {
       )}
 
     </Box>
+    </motion.div>
   );
 };

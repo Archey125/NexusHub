@@ -5,9 +5,10 @@ import {
   AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter
 } from '@chakra-ui/react';
 import { useState, useRef } from 'react';
+import { useAuth } from './useAuth';
 import { supabase } from '../../lib/supabase';
 import { useThemeStore } from '../../store/themeStore';
-import { useAuth } from '../auth/useAuth';
+ 
 
 interface Props {
   isOpen: boolean;

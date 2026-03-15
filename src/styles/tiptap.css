@@ -14,6 +14,7 @@
 
 /* Списки */
 .ProseMirror ul, .ProseMirror ol { padding: 0 1rem; margin: 1rem 1rem; }
+
 .ProseMirror li { margin-bottom: 0.5em; }
 
 /* Цитаты */
