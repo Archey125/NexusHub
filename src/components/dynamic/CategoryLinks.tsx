@@ -114,7 +114,7 @@ export const CategoryLinks = ({ id }: { id: string }) => {
     <Box>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={links.map(l => l.id)} strategy={rectSortingStrategy}>
-           <SimpleGrid columns={{ base: 2, md: 3, lg: 4, xl: 6 }} spacing={4} overflow="hidden" height="100%">
+           <SimpleGrid columns={{ base: 2, md: 3, lg: 4, xl: 6 }} spacing={4} overflow="hidden">
               {/* Список ссылок */}
               {links.map(link => (
                  <SortableItem key={link.id} id={link.id}>

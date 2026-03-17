@@ -95,7 +95,7 @@ export const CategoryAudio = ({ id }: { id: string }) => {
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={tracks.map(t => t.id)} strategy={verticalListSortingStrategy}>
-           <VStack spacing={1} align="stretch" overflow="hidden" height="100vh">
+           <VStack spacing={1} align="stretch" overflow="hidden">
               {tracks.map((track, index) => (
                  <TrackRow 
                    key={track.id}
