@@ -50,7 +50,6 @@ export const MenuBar = ({ editor }: Props) => {
         gap={2} 
         wrap="nowrap" // все в одну линию
         overflowX="auto"
-        justify={{ base: 'center', md: 'flex-start' }}
          // скрыть полосу прокрутки
         css={{
           '&::-webkit-scrollbar': { display: 'none' },
@@ -61,20 +60,20 @@ export const MenuBar = ({ editor }: Props) => {
       >
         
         {/* ТЕКСТ */}
-        <ButtonGroup size="sm" isAttached variant="outline" flexShrink={0}>
+        <ButtonGroup size="sm" isAttached variant="outline">
           <IconButton aria-label="bold" icon={<FaBold />} variant={isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()} />
           <IconButton aria-label="italic" icon={<FaItalic />} variant={isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()} />
           <IconButton aria-label="strike" icon={<FaStrikethrough />} variant={isActive('strike')} onClick={() => editor.chain().focus().toggleStrike().run()} />
         </ButtonGroup>
 
         {/* ЗАГОЛОВКИ */}
-        <ButtonGroup size="sm" isAttached variant="outline" flexShrink={0}>
+        <ButtonGroup size="sm" isAttached variant="outline">
           <Button variant={isActive('heading', { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>H2</Button>
           <Button variant={isActive('heading', { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>H3</Button>
         </ButtonGroup>
 
         {/* ВЫРАВНИВАНИЕ (НОВОЕ) */}
-        <ButtonGroup size="sm" isAttached variant="outline" flexShrink={0}>
+        <ButtonGroup size="sm" isAttached variant="outline">
            <IconButton aria-label="left" icon={<FaAlignLeft />} variant={isActive({ textAlign: 'left' })} onClick={() => editor.chain().focus().setTextAlign('left').run()} />
            <IconButton aria-label="center" icon={<FaAlignCenter />} variant={isActive({ textAlign: 'center' })} onClick={() => editor.chain().focus().setTextAlign('center').run()} />
            <IconButton aria-label="right" icon={<FaAlignRight />} variant={isActive({ textAlign: 'right' })} onClick={() => editor.chain().focus().setTextAlign('right').run()} />

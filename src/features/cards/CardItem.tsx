@@ -40,7 +40,6 @@ export const CardItem = ({ card, onClick }: Props) => {
                 {/* Контейнер для текста */}
                 <Box
                   color={`${accentColor}.600`} _dark={{ color: 'gray.200' }}
-                  noOfLines={10}
                   h="100%"
                   dangerouslySetInnerHTML={{ __html: card.description || "Нет описания..." }}
                   sx={{
@@ -109,7 +108,6 @@ export const CardItem = ({ card, onClick }: Props) => {
             {/* Контейнер для заднего текста */}
             <Box
               color={`${accentColor}.600`} _dark={{ color: 'gray.200' }}
-              noOfLines={10}
               w="100%"
               h="100%"
               dangerouslySetInnerHTML={{ __html: card.description || "Нет описания..." }}

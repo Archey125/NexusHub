@@ -14,7 +14,7 @@ export interface Card {
 export const getCards = async (categoryId: string) => {
   const { data, error } = await supabase
     .from('cards')
-    .select('id, category_id, title, description, background_image, content_text, sort_order')
+    .select('id, category_id, title, description, background_image, content_text, sort_order, linked_card_ids')
     .eq('category_id', categoryId)
     .order('sort_order', { ascending: true });
   if (error) throw error;

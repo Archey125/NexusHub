@@ -133,7 +133,7 @@ export const DynamicPage = () => {
           <IconButton aria-label="Settings" icon={<SettingsIcon />} size="sm" variant="ghost" onClick={() => { setPageTitleEdit(currentPage?.title || ''); onPageSettingsOpen(); }} />
         </Flex>
 
-        <Flex gap={6} flex={1} overflow="hidden" direction={{ base: 'column', md: 'row' }}>
+        <Flex gap={6} flex={1} overflow="hidden" alignItems="flex-start" direction={{ base: 'column', md: 'row' }}>
           
           {/* Категории */}
           <Box 
@@ -180,7 +180,7 @@ export const DynamicPage = () => {
           </Box>
 
           {/* Контент категории */}
-          <Box flex={1} overflowY="auto" pl={{ base: 0, md: 4 }}>
+          <Box flex={1} pl={{ base: 0, md: 4 }} p={4}>
             {activeCategory ? (
                 <>
                   <Flex justify="space-between" align="center" mb={6} borderBottom="1px solid" borderColor="gray.200" pb={2}>

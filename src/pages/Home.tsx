@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
    Box, Container, Flex, Heading, Text, SimpleGrid, IconButton, GridItem,
-   Link, Image, useColorModeValue, VStack, HStack, Button, Icon, Slider, SliderTrack, SliderFilledTrack,
+   useColorModeValue, VStack, HStack, Button, Icon, Slider, SliderTrack, SliderFilledTrack,
 } from '@chakra-ui/react';
 import { RepeatIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { useQuery } from '@tanstack/react-query';
@@ -16,6 +16,7 @@ import { useThemeStore } from '../store/themeStore';
 import { usePlayerStore } from '../store/playerStore'
 
 import { CardItem } from '../features/cards/CardItem';
+import { LinkCard } from '../features/browser/LinkCard';
 import { GeneratorCard } from '../features/generators/GeneratorCard';
 import { NumberGeneratorCard } from '../features/generators/NumberGeneratorCard';
 
@@ -32,7 +33,6 @@ export const Home = () => {
 
    const bgCard = useColorModeValue('white', 'gray.700');
    const textColor = useColorModeValue('gray.600', 'gray.400');
-   const linkBg = useColorModeValue('gray.50', 'gray.800');
    const itemHoverBg = useColorModeValue('gray.100', 'gray.600');
 
    // данные из категорий
@@ -49,68 +49,67 @@ export const Home = () => {
 
    // выбор элементов из категорий
    const rerollLinks = useCallback(() => {
-    if (!allLinks?.length) return;
-    setRandomLinks([...allLinks].sort(() => 0.5 - Math.random()).slice(0, 5));
-  }, [allLinks]);
+      if (!allLinks?.length) return;
+      setRandomLinks([...allLinks].sort(() => 0.5 - Math.random()).slice(0, 5));
+   }, [allLinks]);
 
-  const rerollNote = useCallback(() => {
-    if (!allCards?.length) return;
-    // фильтруем заметки (без картинки)
-    const notes = allCards.filter((c: any) => !c.background_image);
-    if (notes.length === 0) {
-        setRandomNote(null);
-        return;
-    }
-    const rnd = notes[Math.floor(Math.random() * notes.length)];
-    setRandomNote(rnd);
-  }, [allCards]);
+   const rerollNote = useCallback(() => {
+      if (!allCards?.length) return;
+      // фильтруем заметки (без картинки)
+      const notes = allCards.filter((c: any) => !c.background_image);
+      if (notes.length === 0) {
+         setRandomNote(null);
+         return;
+      }
+      const rnd = notes[Math.floor(Math.random() * notes.length)];
+      setRandomNote(rnd);
+   }, [allCards]);
 
-  const rerollCard = useCallback(() => {
-    if (!allCards?.length) return;
-    // фильтруем карточки (с картинкой)
-    const cards = allCards.filter((c: any) => c.background_image);
-    if (cards.length === 0) {
-        setRandomCard(null);
-        return;
-    }
-    const rnd = cards[Math.floor(Math.random() * cards.length)];
-    setRandomCard(rnd);
-  }, [allCards]);
+   const rerollCard = useCallback(() => {
+      if (!allCards?.length) return;
+      // фильтруем карточки (с картинкой)
+      const cards = allCards.filter((c: any) => c.background_image);
+      if (cards.length === 0) {
+         setRandomCard(null);
+         return;
+      }
+      const rnd = cards[Math.floor(Math.random() * cards.length)];
+      setRandomCard(rnd);
+   }, [allCards]);
 
-  const rerollGen = useCallback(() => {
-    if (!allGens?.length) return;
-    const rnd = allGens[Math.floor(Math.random() * allGens.length)];
-    setRandomGen(rnd);
-  }, [allGens]);
+   const rerollGen = useCallback(() => {
+      if (!allGens?.length) return;
+      const rnd = allGens[Math.floor(Math.random() * allGens.length)];
+      setRandomGen(rnd);
+   }, [allGens]);
 
-  const rerollTrack = useCallback(() => {
-    if (!allTracks?.length) return;
-    const rnd = allTracks[Math.floor(Math.random() * allTracks.length)];
-    setRandomTrack(rnd);
-  }, [allTracks]);
+   const rerollTrack = useCallback(() => {
+      if (!allTracks?.length) return;
+      const rnd = allTracks[Math.floor(Math.random() * allTracks.length)];
+      setRandomTrack(rnd);
+   }, [allTracks]);
 
-   useEffect(() => { 
-    if (allLinks) setTimeout(rerollLinks, 0); 
-  }, [allLinks, rerollLinks]);
-  
-  useEffect(() => { 
-    if (allCards) {
-        // запускаем оба реролла для карточек
-        setTimeout(() => { rerollNote(); rerollCard(); }, 0); 
-    }
-  }, [allCards, rerollNote, rerollCard]);
-  
-  useEffect(() => { 
-    if (allGens) setTimeout(rerollGen, 0); 
-  }, [allGens, rerollGen]);
+   useEffect(() => {
+      if (allLinks) setTimeout(rerollLinks, 0);
+   }, [allLinks, rerollLinks]);
 
-  useEffect(() => { 
-    if (allTracks) setTimeout(rerollTrack, 0); 
-  }, [allTracks, rerollTrack]);
+   useEffect(() => {
+      if (allCards) {
+         // запускаем оба реролла для карточек
+         setTimeout(() => { rerollNote(); rerollCard(); }, 0);
+      }
+   }, [allCards, rerollNote, rerollCard]);
+
+   useEffect(() => {
+      if (allGens) setTimeout(rerollGen, 0);
+   }, [allGens, rerollGen]);
+
+   useEffect(() => {
+      if (allTracks) setTimeout(rerollTrack, 0);
+   }, [allTracks, rerollTrack]);
 
 
    const greeting = new Date().getHours() < 12 ? 'Доброе утро' : new Date().getHours() < 18 ? 'Добрый день' : 'Добрый вечер';
-   const stripHtml = (html: string) => { const t = document.createElement("DIV"); t.innerHTML = html || ""; return t.textContent || t.innerText || ""; };
 
    // хендлер плеера
    const isThisTrackPlaying = currentTrack?.id === randomTrack?.id;
@@ -146,12 +145,12 @@ export const Home = () => {
                   {randomLinks.length > 0 ? (
                      <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={3}>
                         {randomLinks.map(link => (
-                           <Link key={link.id} href={link.url} isExternal _hover={{ textDecor: 'none' }}>
-                              <HStack p={2} bg={linkBg} borderRadius="md" transition="0.2s" _hover={{ bg: itemHoverBg }}>
-                                 <Image src={link.icon_url} boxSize="24px" borderRadius="sm" fallbackSrc="https://via.placeholder.com/24" />
-                                 <Text fontSize="sm" noOfLines={1} fontWeight="medium">{link.title}</Text>
-                              </HStack>
-                           </Link>
+                           <LinkCard 
+                              link={link} 
+                              onDelete={() => {}}
+                              onEdit={() => {}} 
+                              isHome={true}
+                           />
                         ))}
                      </SimpleGrid>
                   ) : <Text color={`${accentColor}.500`}>Пусто</Text>}
@@ -166,7 +165,17 @@ export const Home = () => {
                   {randomNote ? (
                      <VStack align="stretch" flex={1} spacing={3} overflow="hidden">
                         <Heading size="md" noOfLines={2}>{randomNote.title}</Heading>
-                        <Text fontSize="sm" color={textColor} noOfLines={6}>{stripHtml(randomNote.content_text || "")}</Text>
+                        <Box
+                           noOfLines={5}
+                           color={`${accentColor}.600`} _dark={{ color: textColor }}
+                           dangerouslySetInnerHTML={{ __html: randomNote.description || "Нет описания..." }}
+                           sx={{
+                              'ul': { paddingLeft: '1.2em', listStyleType: 'disc', textAlign: 'left' },
+                              'ol': { paddingLeft: '1.2em', listStyleType: 'decimal', textAlign: 'left' },
+                              'li': { marginBottom: '0.2em' },
+                              'p': { marginBottom: '0.5em' }
+                           }}
+                        />
                         <Button size="sm" mt="auto" alignSelf="start" leftIcon={<ArrowForwardIcon />} onClick={() => navigate(`/card/${randomNote.id}`)}>Открыть</Button>
                      </VStack>
                   ) : <Text color={`${accentColor}.500`}>Нет заметок</Text>}
@@ -187,7 +196,7 @@ export const Home = () => {
                   ) : <Text color={`${accentColor}.500`}>Пусто</Text>}
                </Box>
 
-               {/* Генераторы*/}
+               {/* Генераторы */}
                <Box bg={bgCard} p={6} borderRadius="xl" boxShadow="md" minH="340px">
                   <Flex justify="space-between" align="center" mb={4}>
                      <HStack><Icon as={FaDice} color={`${accentColor}.500`} /><Heading size="md">Рандом</Heading></HStack>
@@ -215,9 +224,9 @@ export const Home = () => {
                            <VStack align="start" flex={1} spacing={0}>
                               <Text fontWeight="bold" fontSize="lg">{randomTrack.title}</Text>
                               <Text color={`${accentColor}.500`}>{randomTrack.artist}</Text>
-                              {/* Прогресс бар (декоративный, или можно связать с плеером если играет этот трек) */}
+                              {/* Прогресс бар */}
                               <Box w="100%" mt={2}>
-                                 <Slider value={isThisTrackPlaying ? 0 : 0} isReadOnly> {/* Показывать прогресс сложно без подписки на audioRef */}
+                                 <Slider value={isThisTrackPlaying ? 0 : 0} isReadOnly>
                                     <SliderTrack><SliderFilledTrack bg={`${accentColor}.500`} /></SliderTrack>
                                  </Slider>
                               </Box>

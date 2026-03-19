@@ -38,7 +38,6 @@ export const CardCarouselBlock = (props: any) => {
     queryFn: getAllCardCategories,
     enabled: isAdding 
   });
-  console.log(categories);
 
   // список карточек
   const { data: cardsToSelect } = useQuery({ 

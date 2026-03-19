@@ -89,7 +89,7 @@ export const CategoryGen = ({ id }: { id: string }) => {
       {/* СЕТКА */}
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={generators.map(g => g.id)} strategy={rectSortingStrategy}>
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4} overflow="hidden">
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
               {generators.map(gen => (
                 <SortableItem key={gen.id} id={gen.id}>
                     {gen.type === 'number' 

@@ -10,9 +10,10 @@ interface Props {
   link: LinkItem;
   onEdit: () => void;
   onDelete: () => void;
+  isHome: boolean
 }
 
-export const LinkCard = ({ link, onDelete, onEdit }: Props) => {
+export const LinkCard = ({ link, onDelete, onEdit, isHome=false }: Props) => {
   const bgItem = useColorModeValue('gray.50', 'gray.800');
   const { accentColor } = useThemeStore();
 
@@ -30,10 +31,12 @@ export const LinkCard = ({ link, onDelete, onEdit }: Props) => {
       color={`${accentColor}.400`}
     >
       {/* Кнопки управления */}
+      {!isHome ?
       <Flex position="absolute" px={5} width="100%" justifyContent="space-between" top={1} right={0} opacity={0} _groupHover={{ opacity: 1 }} gap={1}>
         <IconButton aria-label='edit-button' icon={<EditIcon />} size="xs" onClick={(e) => { e.stopPropagation(); e.preventDefault(); onEdit(); }} />
         <IconButton aria-label='delete-button' icon={<DeleteIcon />} size="xs" colorScheme="red" onClick={(e) => { e.stopPropagation(); onDelete(); }} />
-      </Flex>
+      </Flex> : <></>
+      }
 
       <Link href={link.url} isExternal _hover={{ textDecor: 'none' }} draggable={false} onDragStart={(e) => e.preventDefault()}>
         <VStack spacing={2}>
