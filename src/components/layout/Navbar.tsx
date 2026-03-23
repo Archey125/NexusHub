@@ -12,6 +12,7 @@ import { useThemeStore } from '../../store/themeStore';
 import { useAuth } from '../auth/useAuth';
 import { getPages, createPage } from '../../features/core/api';
 import { ProfileModal } from '../auth/ProfileModal'; 
+import { Logo } from './Logo';
 
 const COLORS = ['red', 'orange', 'yellow', 'green', 'teal', 'blue', 'cyan', 'purple', 'pink'];
 
@@ -49,7 +50,7 @@ export const Navbar = () => {
           {/* ЛОГОТИП */}
           <NavLink to="/">
             <Text fontSize="xl" fontWeight="900" letterSpacing="tight" color={`${accentColor}.500`}>
-              NexusHub
+              <Logo/> NexusHub
             </Text>
           </NavLink>
 

@@ -50,7 +50,7 @@ export const Home = () => {
    // выбор элементов из категорий
    const rerollLinks = useCallback(() => {
       if (!allLinks?.length) return;
-      setRandomLinks([...allLinks].sort(() => 0.5 - Math.random()).slice(0, 5));
+      setRandomLinks([...allLinks].sort(() => 0.5 - Math.random()).slice(0, 6));
    }, [allLinks]);
 
    const rerollNote = useCallback(() => {
@@ -143,7 +143,7 @@ export const Home = () => {
                      <IconButton aria-label="reroll" icon={<RepeatIcon />} size="sm" variant="ghost" onClick={rerollLinks} />
                   </Flex>
                   {randomLinks.length > 0 ? (
-                     <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={3}>
+                     <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={3}>
                         {randomLinks.map(link => (
                            <LinkCard 
                               link={link} 

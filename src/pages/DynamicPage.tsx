@@ -180,7 +180,7 @@ export const DynamicPage = () => {
           </Box>
 
           {/* Контент категории */}
-          <Box flex={1} pl={{ base: 0, md: 4 }} p={4}>
+          <Box flex={1} pl={{ base: 0, md: 4 }} p={4} w="100%">
             {activeCategory ? (
                 <>
                   <Flex justify="space-between" align="center" mb={6} borderBottom="1px solid" borderColor="gray.200" pb={2}>
