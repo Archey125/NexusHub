@@ -4,7 +4,7 @@ import {
   Box, Button, Container, Flex, Heading, IconButton, Spinner, Text, useDisclosure, 
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, Select, VStack,
 } from '@chakra-ui/react';
-import { AddIcon, DeleteIcon, SettingsIcon } from '@chakra-ui/icons';
+import { AddIcon, SettingsIcon, EditIcon } from '@chakra-ui/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 
@@ -17,7 +17,7 @@ import { useThemeStore } from '../store/themeStore';
 import { motion } from 'framer-motion';
 import { 
   getPages, updatePage, deletePage, 
-  getCategories, createCategory, deleteCategory, reorderCategories 
+  getCategories, createCategory, deleteCategory, updateCategory, reorderCategories 
 } from '../features/core/api';
 
 // Типы категорий
@@ -46,12 +46,18 @@ export const DynamicPage = () => {
 
   const [selectedCatId, setSelectedCatId] = useState<string | null>(null);
 
+  // для страниц
   const { isOpen: isPageSettingsOpen, onOpen: onPageSettingsOpen, onClose: onPageSettingsClose } = useDisclosure();
   const [pageTitleEdit, setPageTitleEdit] = useState('');
 
+  // для категорий (создание)
   const { isOpen: isCatAddOpen, onOpen: onCatAddOpen, onClose: onCatAddClose } = useDisclosure();
   const [newCatTitle, setNewCatTitle] = useState('');
   const [newCatType, setNewCatType] = useState('links');
+
+  // для категорий (редактирование)
+  const { isOpen: isCatEditOpen, onOpen: onCatEditOpen, onClose: onCatEditClose } = useDisclosure();
+  const [editCatTitle, setEditCatTitle] = useState('');
 
   // дата
   const { data: pages } = useQuery({ queryKey: ['pages'], queryFn: getPages });
@@ -94,6 +100,14 @@ export const DynamicPage = () => {
       queryClient.invalidateQueries({ queryKey: ['categories', pageId] });
       setNewCatTitle(''); onCatAddClose();
       setSelectedCatId(data.id);
+    }
+  });
+
+  const updateCatMutation = useMutation({
+    mutationFn: (title: string) => updateCategory(selectedCatId!, { title }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories', pageId] });
+      onCatEditClose();
     }
   });
 
@@ -186,8 +200,8 @@ export const DynamicPage = () => {
                   <Flex justify="space-between" align="center" mb={6} borderBottom="1px solid" borderColor="gray.200" pb={2}>
                       <Heading size="md" color={`${accentColor}.400`}>{activeCategory.title}</Heading>
                       <IconButton 
-                        aria-label="delete" icon={<DeleteIcon />} size="xs" colorScheme="red" variant="ghost" 
-                        onClick={() => { if(confirm('Удалить категорию?')) deleteCatMutation.mutate(activeCategory.id); }}
+                        aria-label="edit" icon={<EditIcon />} size="xs" variant="ghost" 
+                        onClick={() => { setEditCatTitle(activeCategory.title); onCatEditOpen(); }} 
                       />
                   </Flex>
 
@@ -214,14 +228,17 @@ export const DynamicPage = () => {
           <ModalContent>
             <ModalHeader>Настройки страницы</ModalHeader>
             <ModalBody>
-              <VStack spacing={4}>
-                  <Input value={pageTitleEdit} onChange={(e) => setPageTitleEdit(e.target.value)} placeholder="Название" />
-                  <Button w="100%" colorScheme="red" variant="outline" onClick={() => { if(confirm('Удалить страницу?')) deletePageMutation.mutate(); }}>
-                    Удалить страницу
-                  </Button>
-              </VStack>
+                <Input
+                  placeholder="Название" 
+                  value={pageTitleEdit} 
+                  onChange={(e) => setPageTitleEdit(e.target.value)}
+                  autoFocus 
+                />
             </ModalBody>
-            <ModalFooter>
+            <ModalFooter justifyContent={"space-between"}>
+              <Button colorScheme="red" variant="outline" onClick={() => { if(confirm('Удалить страницу?')) deletePageMutation.mutate(); }}>
+                Удалить страницу
+              </Button>
               <Button colorScheme={accentColor} onClick={() => updatePageMutation.mutate(pageTitleEdit)}>Сохранить</Button>
             </ModalFooter>
           </ModalContent>
@@ -242,6 +259,40 @@ export const DynamicPage = () => {
             </ModalBody>
             <ModalFooter>
               <Button colorScheme={accentColor} onClick={() => newCatTitle && createCatMutation.mutate()}>Создать</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
+
+        {/* Редактирование категории */}
+        <Modal isOpen={isCatEditOpen} onClose={onCatEditClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Редактировать категорию</ModalHeader>
+            <ModalBody>
+              <Input
+                placeholder="Название" 
+                value={editCatTitle} 
+                onChange={(e) => setEditCatTitle(e.target.value)} 
+                autoFocus 
+              />
+            </ModalBody>
+            <ModalFooter justifyContent={"space-between"}>
+              <Button mr={3} onClick={onCatEditClose}>Отмена</Button>
+              <Button 
+                colorScheme={accentColor} 
+                onClick={() => editCatTitle && updateCatMutation.mutate(editCatTitle)}
+                isLoading={updateCatMutation.isPending}
+              >
+                Сохранить
+              </Button>
+              <Button 
+                colorScheme="red" variant="outline"
+                onClick={() => { if(confirm('Удалить категорию?')) deleteCatMutation.mutate(activeCategory.id); }}
+                isLoading={updateCatMutation.isPending}
+              >
+                Удалить
+              </Button>
             </ModalFooter>
           </ModalContent>
         </Modal>

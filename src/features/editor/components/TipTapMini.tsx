@@ -3,9 +3,10 @@ import StarterKit from '@tiptap/starter-kit';
 import { Box, ButtonGroup, IconButton, Flex, useColorModeValue } from '@chakra-ui/react';
 import {
   FaBold, FaItalic, FaListUl, FaListOl, FaMinus,
-  FaAlignLeft, FaAlignCenter, FaAlignRight
+  FaAlignLeft, FaAlignCenter, FaAlignRight, FaLink
 } from 'react-icons/fa';
 import TextAlign from '@tiptap/extension-text-align';
+import Link from '@tiptap/extension-link';
 import { useEffect } from 'react';
 
 interface Props {
@@ -27,6 +28,7 @@ export const TipTapMini = ({ content, onChange }: Props) => {
         codeBlock: false,
       }),
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
+      Link.configure({ openOnClick: false, autolink: true }),
     ],
     content: content,
     onUpdate: ({ editor }) => {
@@ -46,6 +48,17 @@ export const TipTapMini = ({ content, onChange }: Props) => {
     }
   }, [content, editor]);
 
+  const setLinkMini = () => {
+    const previousUrl = editor.getAttributes('link').href;
+    const url = window.prompt('URL ссылки:', previousUrl);
+    if (url === null) return;
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run();
+      return;
+    }
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+  };
+  
   if (!editor) return null;
 
   return (
@@ -94,7 +107,10 @@ export const TipTapMini = ({ content, onChange }: Props) => {
           <IconButton aria-label="right" icon={<FaAlignRight />} onClick={() => editor.chain().focus().setTextAlign('right').run()} isActive={editor.isActive({ textAlign: 'right' })} />
         </ButtonGroup>
 
-        <IconButton size="sm" variant="ghost" aria-label="hr" icon={<FaMinus />} onClick={() => editor.chain().focus().setHorizontalRule().run()} />
+        <ButtonGroup size="sm" isAttached variant="ghost">
+          <IconButton size="sm" variant="ghost" aria-label="hr" icon={<FaMinus />} onClick={() => editor.chain().focus().setHorizontalRule().run()} />
+          <IconButton size="sm" variant="ghost" aria-label="link" icon={<FaLink />} onClick={setLinkMini} />
+        </ButtonGroup>
       </Flex>
 
       <EditorContent editor={editor} />

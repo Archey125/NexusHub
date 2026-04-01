@@ -13,7 +13,7 @@ import { motion } from 'framer-motion';
 import { deleteFileFromStorage } from '../lib/storage'; // Cloudinary
 import { useThemeStore } from '../store/themeStore';
 import { getCardFull, updateCard, uploadCardCover, deleteCardRecord } from '../features/editor/api';
-import { extractFileUrls, processContentAndUpload } from '../features/editor/utils';
+import { extractFileUrls, processContentAndUpload, extractLinkedCardIds } from '../features/editor/utils';
 import { useCardStore } from '../store/cardStore';
 
 // TipTap
@@ -178,8 +178,11 @@ export const CardEditor = () => {
 
       useCardStore.getState().clearFiles(); // очищаем стор blob
 
-      const contentText = editor?.getText().slice(0, 200); //бд
+      const contentText = editor?.getText().slice(0, 200); 
 
+      const linkedIds = extractLinkedCardIds(contentJson); // для связей в поиске
+
+      //бд
       updateMutation.mutate({
         id: cardId!,
         updates: {
@@ -188,6 +191,7 @@ export const CardEditor = () => {
           background_image: coverUrl,
           content_json: contentJson,
           content_text: contentText,
+          linked_card_ids: linkedIds,
           updated_at: new Date().toISOString()
         }
       });

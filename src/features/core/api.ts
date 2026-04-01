@@ -103,6 +103,18 @@ export const createCategory = async (pageId: string, title: string, type: string
   return data;
 };
 
+export const updateCategory = async (id: string, updates: { title?: string; content_type?: string }) => {
+  const { data, error } = await supabase
+    .from('categories')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
 export const deleteCategory = async (id: string) => {
   const { error } = await supabase.from('categories').delete().eq('id', id);
   if (error) {

@@ -37,7 +37,7 @@ export const CategoryCards = ({ id }: { id: string }) => {
      queryFn: async () => (await supabase
         .from('categories')
         .select('id, title')
-        .eq('page_id', pageId!) // <-- Фильтр по странице
+        .eq('page_id', pageId!) // фильтр по странице
         .eq('content_type', 'cards')
      ).data,
      enabled: !!pageId
