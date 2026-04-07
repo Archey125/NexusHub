@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useParams, useNavigate } from 'react-router-dom';
 import { 
   Box, Button, Container, Flex, Heading, IconButton, Spinner, Text, useDisclosure, 
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, Select, VStack,
@@ -44,7 +44,15 @@ export const DynamicPage = () => {
   const queryClient = useQueryClient();
   const { accentColor } = useThemeStore();
 
-  const [selectedCatId, setSelectedCatId] = useState<string | null>(null);
+  // сохранение открытой категории
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedCatId = searchParams.get('category');
+
+  const handleCategoryClick = (id: string) => {
+    setSearchParams({ category: id });
+  };
+
+  //МОДАЛКИ
 
   // для страниц
   const { isOpen: isPageSettingsOpen, onOpen: onPageSettingsOpen, onClose: onPageSettingsClose } = useDisclosure();
@@ -59,7 +67,7 @@ export const DynamicPage = () => {
   const { isOpen: isCatEditOpen, onOpen: onCatEditOpen, onClose: onCatEditClose } = useDisclosure();
   const [editCatTitle, setEditCatTitle] = useState('');
 
-  // дата
+  // дата и загрузка
   const { data: pages } = useQuery({ queryKey: ['pages'], queryFn: getPages });
   const currentPage = pages?.find(p => p.id === pageId);
 
@@ -73,12 +81,15 @@ export const DynamicPage = () => {
   const [categories, setCategories] = useState<any[]>([]);
   useEffect(() => {
     if (serverCategories) {
-        const timeout = setTimeout(() => {
-            setCategories(prev => JSON.stringify(prev) === JSON.stringify(serverCategories) ? prev : serverCategories);
-        }, 0);
-        return () => clearTimeout(timeout);
+      const timeout = setTimeout(() => {
+        setCategories(serverCategories);
+        if (!selectedCatId && serverCategories.length > 0) {
+          setSearchParams({ category: serverCategories[0].id }, { replace: true });
+        }
+      }, 0);
+      return () => clearTimeout(timeout);
     }
-  }, [serverCategories]);
+  }, [serverCategories, selectedCatId, setSearchParams]);
 
   const activeCategory = categories.find(c => c.id === selectedCatId);
 
@@ -99,7 +110,7 @@ export const DynamicPage = () => {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['categories', pageId] });
       setNewCatTitle(''); onCatAddClose();
-      setSelectedCatId(data.id);
+      handleCategoryClick(data.id);
     }
   });
 
@@ -114,8 +125,8 @@ export const DynamicPage = () => {
   const deleteCatMutation = useMutation({
     mutationFn: deleteCategory,
     onSuccess: () => {
-       queryClient.invalidateQueries({ queryKey: ['categories', pageId] });
-       setSelectedCatId(null);
+      queryClient.invalidateQueries({ queryKey: ['categories', pageId] });
+      setSearchParams({});
     },
     onError: (e: any) => alert(e.message)
   });
@@ -161,7 +172,7 @@ export const DynamicPage = () => {
           >
             {/* Категории мобилки */}
             <Box display={{ base: 'block', md: 'none' }} mb={4}>
-              <Select value={selectedCatId || ''} onChange={(e) => setSelectedCatId(e.target.value)}>
+              <Select value={selectedCatId || ''} onChange={(e) => handleCategoryClick(e.target.value)}>
                   {categories.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
               </Select>
               <Button size="sm" w="100%" mt={2} leftIcon={<AddIcon />} onClick={onCatAddOpen}>Новая категория</Button>
@@ -183,7 +194,7 @@ export const DynamicPage = () => {
                             id={cat.id} 
                             title={cat.title}
                             isSelected={selectedCatId === cat.id}
-                            onClick={() => setSelectedCatId(cat.id)}
+                            onClick={() => handleCategoryClick(cat.id)}
                             accentColor={accentColor}
                           />
                       ))}

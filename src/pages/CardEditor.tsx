@@ -301,18 +301,38 @@ export const CardEditor = () => {
           {/* Обложка */}
           <GridItem>
             <AspectRatio ratio={2 / 3} w="100%">
-              <Box borderRadius="lg" overflow="hidden" border="1px solid" borderColor="gray.200" bg="gray.100" position="relative" role="group">
+              <Box 
+                borderRadius="lg" 
+                overflow="hidden" 
+                border={coverUrl ? ("2px solid") : ("2px dashed")}
+                borderColor={`${accentColor}.300`}
+                position="relative" 
+                role="group"
+                cursor="pointer"
+                _hover={{ borderColor: `${accentColor}.400`, bg: 'whiteAlpha.50' }}
+                >
                 {coverUrl ? (
                   <Image src={coverUrl} w="100%" h="100%" objectFit="cover" />
                 ) : (
-                  <Flex align="center" justify="center" w="100%" h="100%" bg="gray.50" color="gray.400" flexDirection="column">
+                  <Flex align="center" justify="center" w="100%" color={`${accentColor}.300`} flexDirection="column">
                     <Text>Нет обложки</Text>
-                    {isEditMode && <Text fontSize="xs">(Вид заметки)</Text>}
+                    {isEditMode && <Text fontSize="xs">(Вид карточки)</Text>}
                   </Flex>
                 )}
 
                 {isEditMode && !isUploading && (
-                  <Flex position="absolute" inset={0} bg="blackAlpha.600" opacity={0} _groupHover={{ opacity: 1 }} transition="0.2s" align="center" justify="center" direction="column" gap={2}>
+                  <Flex 
+                    position="absolute" 
+                    inset={0} 
+                    bg="blackAlpha.600" 
+                    opacity={0} 
+                    _groupHover={{ opacity: 1 }} 
+                    transition="0.2s" 
+                    align="center" 
+                    justify="center" 
+                    direction="column" 
+                    gap={2}
+                  >
                     <Button size="sm" leftIcon={<AttachmentIcon />} onClick={() => fileInputRef.current?.click()}>
                       {coverUrl ? 'Заменить' : 'Загрузить'}
                     </Button>

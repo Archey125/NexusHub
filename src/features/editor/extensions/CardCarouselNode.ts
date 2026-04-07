@@ -10,7 +10,8 @@ export const CardCarouselNode = Node.create({
 
   addAttributes() {
     return {
-      cardsData: { default: [] }, // ['id1', 'id2']
+      // массив объектов: [{ id: '...', spoiler: boolean, caption: '...' }]
+      cardsData: { default: [] },
     };
   },
 

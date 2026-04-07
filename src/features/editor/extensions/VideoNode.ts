@@ -12,6 +12,7 @@ export const VideoNode = Node.create({
     return {
       src: { default: null },
       type: { default: 'file' }, // 'file' | 'youtube'
+      caption: { default: '' },
       isSpoiler: { default: false },
     };
   },
