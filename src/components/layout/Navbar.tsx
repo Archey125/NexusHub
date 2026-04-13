@@ -1,7 +1,7 @@
 import { 
   Box, Flex, Button, HStack, IconButton, useColorMode, 
-  Menu, MenuButton, MenuList, MenuItem, Text, Avatar, useDisclosure, 
-  MenuDivider, MenuGroup, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, Input, ModalFooter
+  Menu, MenuButton, MenuList, Text, Avatar, useDisclosure, Collapse, VStack, Divider,
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, Input, ModalFooter
 } from '@chakra-ui/react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { MoonIcon, SunIcon, HamburgerIcon, AddIcon } from '@chakra-ui/icons'; 
@@ -23,9 +23,13 @@ export const Navbar = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  // обычное меню
   const { isOpen: isAddOpen, onOpen: onAddOpen, onClose: onAddClose } = useDisclosure();
-  const [newPageTitle, setNewPageTitle] = useState('');
+  // мобильное меню
+  const { isOpen: isMobileMenuOpen, onToggle: toggleMobileMenu } = useDisclosure();
+
   
+  const [newPageTitle, setNewPageTitle] = useState('');
   const { isOpen: isProfileOpen, onOpen: onProfileOpen, onClose: onProfileClose } = useDisclosure();
 
   const { data: pages } = useQuery({ 
@@ -80,7 +84,7 @@ export const Navbar = () => {
                 </Flex>
               </MenuList>
             </Menu>
-            <IconButton size="sm" icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />} aria-label="Theme" onClick={toggleColorMode} variant="ghost" />
+            <IconButton size="sm" icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />} aria-label="Theme" onClick={toggleColorMode} variant="ghost" color={accentColor}/>
 
             {user && (
               <HStack spacing={2} ml={2} borderLeft="1px solid" borderColor="gray.600" pl={2}>
@@ -90,54 +94,70 @@ export const Navbar = () => {
             )}
           </Flex>
 
-          {/* Мобильное меню (Гамбургер) */}
+          {/* Мобильная кнопка (Гамбургер) */}
           <Box display={{ base: 'block', md: 'none' }}>
-            <Menu>
-              <MenuButton as={IconButton} icon={<HamburgerIcon />} variant="outline" size="sm" />
-              <MenuList zIndex={1001} maxH="80vh" overflowY="auto">
-                {user && (
-                  <>
-                    <MenuGroup title="Страницы">
-                      {pages?.map((page) => (
-                        <NavLink key={page.id} to={`/page/${page.id}`}>
-                          <MenuItem>{page.title}</MenuItem>
-                        </NavLink>
-                      ))}
-                      <MenuItem icon={<AddIcon />} onClick={onAddOpen} color={`${accentColor}.500`}>
-                        Новая страница
-                      </MenuItem>
-                    </MenuGroup>
-                    <MenuDivider />
-                  </>
-                )}
-
-                <MenuItem onClick={toggleColorMode} icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}>
-                  Сменить тему
-                </MenuItem>
-                
-                <MenuGroup title="Цвет акцента">
-                   <Flex p={2} gap={2} wrap="wrap">
-                      {COLORS.map((c) => (
-                        <Button key={c} size="xs" bg={`${c}.500`} onClick={() => setAccentColor(c)} borderRadius="full" w={6} h={6}/>
-                      ))}
-                   </Flex>
-                </MenuGroup>
-
-                <MenuDivider />
-                
-                {user ? (
-                  <>
-                    <MenuItem>Профиль</MenuItem>
-                    <MenuItem onClick={signOut} color="red.500">Выйти</MenuItem>
-                  </>
-                ) : (
-                    <MenuItem onClick={() => navigate('/login')} color="blue.500">Войти</MenuItem>
-                )}
-              </MenuList>
-            </Menu>
+            <IconButton 
+              icon={<HamburgerIcon />} 
+              variant="outline" 
+              size="sm" 
+              onClick={toggleMobileMenu} 
+              aria-label="Toggle Navigation"
+            />
           </Box>
 
         </Flex>
+
+        {/* Выпадающее мобильное меню */}
+        <Collapse in={isMobileMenuOpen} animateOpacity>
+          <VStack 
+            display={{ base: 'flex', md: 'none' }} 
+            align="stretch" 
+            spacing={4} 
+            pb={4} 
+            pt={2}
+            maxH="90vh" 
+            overflowY="auto"
+            zIndex={9999}
+          >
+            {user && (
+              <>
+                <Text fontWeight="bold" color="gray.500" fontSize="sm">Страницы</Text>
+                {pages?.map((page) => (
+                  <NavLink key={page.id} to={`/page/${page.id}`} onClick={toggleMobileMenu}>
+                    <Button w="100%" justifyContent="flex-start" variant="ghost" colorScheme={accentColor}>
+                      {page.title}
+                    </Button>
+                  </NavLink>
+                ))}
+                <Button w="100%" justifyContent="flex-start" leftIcon={<AddIcon />} onClick={() => { onAddOpen(); toggleMobileMenu(); }} color={`${accentColor}.500`} variant="ghost">
+                  Новая страница
+                </Button>
+                <Divider />
+              </>
+            )}
+
+            <Text fontWeight="bold" color="gray.500" fontSize="sm">Тема и Акцент</Text>
+            <IconButton w="100%" justifyContent="center" onClick={toggleColorMode} icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />} variant="ghost" aria-label="Theme"  color={accentColor}/>
+            <Flex p={2} gap={2} wrap="wrap">
+               {COLORS.map((c) => (
+                  <Box key={c} as="button" bg={`${c}.500`} onClick={() => setAccentColor(c)} borderRadius="full" w={8} h={8} />
+               ))}
+            </Flex>
+
+            <Divider />
+            
+            {user ? (
+              <>
+                <Button w="100%" justifyContent="flex-start" variant="ghost">Профиль</Button>
+                <Button w="100%" justifyContent="flex-start" variant="ghost" colorScheme="red" onClick={signOut}>Выйти</Button>
+              </>
+            ) : (
+              <Button w="100%" justifyContent="flex-start" onClick={() => { navigate('/login'); toggleMobileMenu(); }} colorScheme="blue" variant="ghost">Войти</Button>
+            )}
+          </VStack>
+        </Collapse>
+
+
       </Box>
 
       {/* Модалка создания страницы */}

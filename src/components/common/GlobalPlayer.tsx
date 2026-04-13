@@ -3,12 +3,13 @@ import {
   useColorModeValue, HStack, VStack, useDisclosure,
 } from '@chakra-ui/react';
 import { 
-  FaPlay, FaPause, FaStepForward, FaStepBackward, FaRandom, FaRedo, FaVolumeUp, FaVolumeMute, FaChevronUp, FaChevronDown
+  FaPlay, FaPause, FaStepForward, FaStepBackward, FaRandom, FaRedo, FaVolumeUp, FaVolumeMute
 } from 'react-icons/fa';
 import { MdRepeatOne } from 'react-icons/md';
 import { usePlayerStore } from '../../store/playerStore';
 import { useThemeStore } from '../../store/themeStore';
 import { useRef, useEffect, useState } from 'react';
+import { motion, type PanInfo } from 'framer-motion';
 
 const formatTime = (seconds: number) => {
   if (!seconds) return "00:00";
@@ -87,6 +88,14 @@ export const GlobalPlayer = () => {
     }
   };
 
+  // функция закрытия при свайпе вниз
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    // если свайпнули вниз более чем на 100 пикселей или с большой скоростью
+    if (info.offset.y > 100 || info.velocity.y > 500) {
+      if (isExpanded) toggleExpand(); // сворачиваем плеер
+    }
+  };
+
   if (!currentTrack) return null;
 
   return (
@@ -99,7 +108,7 @@ export const GlobalPlayer = () => {
       boxShadow="lg"
       transition="height 0.3s ease"
       // если развернут - весь экран, иначе - адаптивно
-      h={isExpanded ? '100vh' : { base: '70px', md: '90px' }}
+      h={{ base: isExpanded ? '100vh' : '70px', md: '90px' }}
       overflow="hidden"
       display="flex"
       flexDirection="column"
@@ -112,6 +121,7 @@ export const GlobalPlayer = () => {
         align="center" justify="space-between" px={4} h="100%" w="100%"
         display={{ base: isExpanded ? 'none' : 'flex', md: 'none' }}
         onClick={toggleExpand}
+        cursor="pointer"
       >
          <HStack flex={1} overflow="hidden" spacing={3}>
             {/* Обложка мини */}
@@ -124,7 +134,6 @@ export const GlobalPlayer = () => {
          
          <HStack spacing={1}>
             <IconButton colorScheme={accentColor} aria-label="Play" icon={isPlaying ? <FaPause /> : <FaPlay />} onClick={(e) => { e.stopPropagation(); togglePlay(); }} variant="ghost" rounded="full" />
-            <IconButton colorScheme={accentColor} aria-label="Expand" icon={<FaChevronUp />} onClick={(e) => { e.stopPropagation(); toggleExpand(); }} variant="ghost" />
          </HStack>
          
          {/* Прогресс бар тонкой линией сверху */}
@@ -134,81 +143,96 @@ export const GlobalPlayer = () => {
       </Flex>
 
       {/* ПОЛНАЯ ВЕРСИЯ (Десктоп или Развернутая мобилка) */}
-      <Flex 
-        direction={{ base: 'column', md: 'row' }} 
-        align="center" 
-        justify="space-between" 
-        h="100%" 
-        px={{ base: 6, md: 8 }} 
-        py={{ base: 8, md: 2 }}
-        display={{ base: isExpanded ? 'flex' : 'none', md: 'flex' }}
+      <Box 
+        display={{ base: isExpanded ? 'block' : 'none', md: 'block' }} 
+        h="100%" w="100%"
       >
-        
-        {/* Кнопка "Свернуть" (Только мобилка) */}
-        <IconButton 
-           aria-label="Collapse" icon={<FaChevronDown />} 
-           display={{ base: 'flex', md: 'none' }} 
-           position="absolute" top={4} left={4} variant="ghost" 
-           onClick={toggleExpand} 
-        />
+        <motion.div
+          drag={isExpanded ? "y" : false} // свайп только на развернутой мобилке
+          dragConstraints={{ top: 0, bottom: 0 }} 
+          dragElastic={{ top: 0, bottom: 0.5 }} 
+          onDragEnd={handleDragEnd}
+          style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}
+        >
+          {/* Индикатор свайпа */}
+          <Flex justify="center" pt={4} pb={2} display={{ base: 'flex', md: 'none' }}>
+            <Box w="40px" h="4px" bg="gray.300" borderRadius="full" opacity={0.6} />
+          </Flex>
 
-        {/* Обложки и информация */}
-        <HStack spacing={4} w={{ base: '100%', md: '30%' }} mb={{ base: 6, md: 0 }} justifyContent={{ base: 'center', md: 'flex-start' }} flexDirection={{ base: 'column', md: 'row' }} textAlign={{ base: 'center', md: 'left' }}>
-          {/* на мобилке обложка большая */}
-          <Box 
-            boxSize={{ base: '200px', md: '50px' }} 
-            bg={`${accentColor}.500`} borderRadius="xl" shadow="xl"
-            display="flex" alignItems="center" justifyContent="center" color="white" fontSize="4xl"
+          <Flex 
+            direction={{ base: 'column', md: 'row' }} 
+            align="center" 
+            justify="space-between" 
+            h="100%" 
+            px={{ base: 6, md: 8 }} 
+            py={{ base: 8, md: 2 }}
           >
-            🎵
-          </Box>
-          <Box overflow="hidden" w="100%">
-            <Text fontWeight="bold" fontSize={{ base: 'xl', md: 'sm' }} noOfLines={1}>{currentTrack.title}</Text>
-            <Text fontSize={{ base: 'md', md: 'xs' }} color={`${accentColor}.500`} noOfLines={1}>{currentTrack.artist}</Text>
-          </Box>
-        </HStack>
-
-        {/* Управление */}
-        <VStack spacing={{ base: 6, md: 1 }} w={{ base: '100%', md: '40%' }}>
-            {/* Кнопки */}
-            <HStack spacing={6}>
-              <IconButton aria-label="Shuffle" icon={<FaRandom />} variant="ghost" color={isShuffle ? `${accentColor}.500` : 'gray.400'} onClick={toggleShuffle}/>
-              <IconButton aria-label="Prev" colorScheme={accentColor} icon={<FaStepBackward />} variant="ghost" fontSize="20px" onClick={prevTrack} />
-              
-              {/* Большая кнопка Play */}
-              <IconButton 
-                aria-label="Play" icon={isPlaying ? <FaPause /> : <FaPlay />} 
-                colorScheme={accentColor} rounded="full" boxSize={{ base: '64px', md: '48px' }} fontSize="24px"
-                onClick={togglePlay}
-              />
-              
-              <IconButton aria-label="Next" colorScheme={accentColor} icon={<FaStepForward />} variant="ghost" fontSize="20px" onClick={nextTrack} />
-              <IconButton aria-label="Repeat" icon={repeatMode === 'one' ? <MdRepeatOne /> : <FaRedo />} variant="ghost" color={repeatMode !== 'none' ? `${accentColor}.500` : 'gray.400'} onClick={toggleRepeat}/>
+            {/* Обложки и информация */}
+            <HStack 
+              spacing={4} 
+              w={{ base: '100%', md: '30%' }} 
+              mb={{ base: 6, md: 0 }} 
+              justifyContent={{ base: 'center', md: 'flex-start' }} 
+              flexDirection={{ base: 'column', md: 'row' }} 
+              textAlign={{ base: 'center', md: 'left' }}
+              onClick={toggleExpand}
+            >
+              <Box 
+                boxSize={{ base: '200px', md: '50px' }} 
+                bg={`${accentColor}.500`} borderRadius="xl" shadow="xl"
+                display="flex" alignItems="center" justifyContent="center" color="white" fontSize="4xl"
+              >
+                🎵
+              </Box>
+              <Box overflow="hidden" w="100%">
+                <Text fontWeight="bold" fontSize={{ base: 'xl', md: 'sm' }} noOfLines={1}>{currentTrack.title}</Text>
+                <Text fontSize={{ base: 'md', md: 'xs' }} color={`${accentColor}.500`} noOfLines={1}>{currentTrack.artist}</Text>
+              </Box>
             </HStack>
-            
-            {/* Слайдер */}
-            <HStack w="100%" spacing={3}>
-                <Text fontSize="xs" color="gray.500" w="40px" textAlign="right">{formatTime(currentTime)}</Text>
-                <Slider aria-label="seek" value={currentTime} min={0} max={duration || 100} onChange={handleSeek}>
-                    <SliderTrack bg="gray.200"><SliderFilledTrack bg={`${accentColor}.500`} /></SliderTrack>
-                    <SliderThumb boxSize={3} />
-                </Slider>
-                <Text fontSize="xs" color="gray.500" w="40px">{formatTime(duration)}</Text>
+
+            {/* Управление */}
+            <VStack spacing={{ base: 6, md: 1 }} w={{ base: '100%', md: '40%' }}>
+                {/* Кнопки */}
+                <HStack spacing={6}>
+                  <IconButton aria-label="Shuffle" icon={<FaRandom />} variant="ghost" color={isShuffle ? `${accentColor}.500` : 'gray.400'} onClick={toggleShuffle}/>
+                  <IconButton aria-label="Prev" colorScheme={accentColor} icon={<FaStepBackward />} variant="ghost" fontSize="20px" onClick={prevTrack} />
+                  
+                  {/* Большая кнопка Play */}
+                  <IconButton 
+                    aria-label="Play" icon={isPlaying ? <FaPause /> : <FaPlay />} 
+                    colorScheme={accentColor} rounded="full" boxSize={{ base: '64px', md: '48px' }} fontSize="24px"
+                    onClick={togglePlay}
+                  />
+                  
+                  <IconButton aria-label="Next" colorScheme={accentColor} icon={<FaStepForward />} variant="ghost" fontSize="20px" onClick={nextTrack} />
+                  <IconButton aria-label="Repeat" icon={repeatMode === 'one' ? <MdRepeatOne /> : <FaRedo />} variant="ghost" color={repeatMode !== 'none' ? `${accentColor}.500` : 'gray.400'} onClick={toggleRepeat}/>
+                </HStack>
+                
+                {/* Слайдер */}
+                <HStack w="100%" spacing={3}>
+                    <Text fontSize="xs" color="gray.500" w="40px" textAlign="right">{formatTime(currentTime)}</Text>
+                    <Slider aria-label="seek" value={currentTime} min={0} max={duration || 100} onChange={handleSeek}>
+                        <SliderTrack bg="gray.200"><SliderFilledTrack bg={`${accentColor}.500`} /></SliderTrack>
+                        <SliderThumb boxSize={3} />
+                    </Slider>
+                    <Text fontSize="xs" color="gray.500" w="40px">{formatTime(duration)}</Text>
+                </HStack>
+            </VStack>
+
+            {/* Громкость */}
+            <HStack w={{ base: '100%', md: '30%' }} justify={{ base: 'center', md: 'flex-end' }} spacing={4} mt={{ base: 6, md: 0 }}>
+               <IconButton aria-label='mute' icon={isMuted ? <FaVolumeMute/> : <FaVolumeUp/>} variant="ghost" onClick={toggleMute}/>
+               <Box w={{ base: '70%', md: '100px' }}>
+                 <Slider aria-label="volume" value={isMuted ? 0 : volume * 100} min={0} max={100} onChange={handleVolumeChange}>
+                   <SliderTrack bg="gray.200"><SliderFilledTrack bg="gray.500" /></SliderTrack>
+                   <SliderThumb boxSize={3} />
+                 </Slider>
+               </Box>
             </HStack>
-        </VStack>
 
-        {/* Громко */}
-        <HStack w={{ base: '100%', md: '30%' }} justify={{ base: 'center', md: 'flex-end' }} spacing={4} mt={{ base: 6, md: 0 }}>
-           <IconButton aria-label='mute' icon={isMuted ? <FaVolumeMute/> : <FaVolumeUp/>} variant="ghost" onClick={toggleMute}/>
-           <Box w={{ base: '70%', md: '100px' }}>
-             <Slider aria-label="volume" value={isMuted ? 0 : volume * 100} min={0} max={100} onChange={handleVolumeChange}>
-               <SliderTrack bg="gray.200"><SliderFilledTrack bg="gray.500" /></SliderTrack>
-               <SliderThumb boxSize={3} />
-             </Slider>
-           </Box>
-        </HStack>
-
-      </Flex>
+          </Flex>
+        </motion.div>
+      </Box>
     </Box>
   );
 };

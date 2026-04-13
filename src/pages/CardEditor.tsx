@@ -178,7 +178,7 @@ export const CardEditor = () => {
 
       useCardStore.getState().clearFiles(); // очищаем стор blob
 
-      const contentText = editor?.getText().slice(0, 200); 
+      const contentText = editor?.getText().slice(0, 200);
 
       const linkedIds = extractLinkedCardIds(contentJson); // для связей в поиске
 
@@ -300,48 +300,87 @@ export const CardEditor = () => {
         <Grid templateColumns={{ base: '1fr', md: '300px 1fr' }} gap={8} mb={10} mt={8}>
           {/* Обложка */}
           <GridItem>
-            <AspectRatio ratio={2 / 3} w="100%">
-              <Box 
-                borderRadius="lg" 
-                overflow="hidden" 
-                border={coverUrl ? ("2px solid") : ("2px dashed")}
-                borderColor={`${accentColor}.300`}
-                position="relative" 
-                role="group"
-                cursor="pointer"
-                _hover={{ borderColor: `${accentColor}.400`, bg: 'whiteAlpha.50' }}
+            {coverUrl ? 
+              (
+              // С загруженной обложкой
+              <AspectRatio ratio={2 / 3} w="100%">
+                <Box
+                  borderRadius="lg"
+                  overflow="hidden"
+                  border={coverUrl ? ("2px solid") : ("2px dashed")}
+                  borderColor={`${accentColor}.300`}
+                  position="relative"
+                  role="group"
+                  cursor="pointer"
+                  _hover={{ borderColor: `${accentColor}.400`, bg: 'whiteAlpha.50' }}
                 >
-                {coverUrl ? (
                   <Image src={coverUrl} w="100%" h="100%" objectFit="cover" />
-                ) : (
-                  <Flex align="center" justify="center" w="100%" color={`${accentColor}.300`} flexDirection="column">
+                  {isEditMode && !isUploading && (
+                    <Flex
+                      position="absolute"
+                      inset={0}
+                      bg="blackAlpha.600"
+                      opacity={0}
+                      _groupHover={{ opacity: 1 }}
+                      transition="0.2s"
+                      align="center"
+                      justify="center"
+                      direction="column"
+                      gap={2}
+                    >
+                      <Button size="sm" leftIcon={<AttachmentIcon />} onClick={() => fileInputRef.current?.click()}>
+                        {coverUrl ? 'Заменить' : 'Загрузить'}
+                      </Button>
+                      {coverUrl && <Button size="sm" colorScheme="red" onClick={handleDeleteCover}>Удалить</Button>}
+                    </Flex>
+                  )}
+                  <input type="file" hidden ref={fileInputRef} onChange={handleUploadCover} accept="image/*" />
+                </Box>
+              </AspectRatio>
+
+
+              ) : 
+              (
+                //Без обложки
+                <Box
+                  height={{sm:"inherit", md:"100%"}}
+                  borderRadius="lg"
+                  overflow="hidden"
+                  border={coverUrl ? ("2px solid") : ("2px dashed")}
+                  borderColor={`${accentColor}.300`}
+                  position="relative"
+                  role="group"
+                  cursor="pointer"
+                  _hover={{ borderColor: `${accentColor}.400`, bg: 'whiteAlpha.50' }}
+                >
+                  <Flex align="center" h="100%" justify="center" w="100%" color={`${accentColor}.300`} flexDirection="column">
                     <Text>Нет обложки</Text>
                     {isEditMode && <Text fontSize="xs">(Вид карточки)</Text>}
                   </Flex>
-                )}
 
-                {isEditMode && !isUploading && (
-                  <Flex 
-                    position="absolute" 
-                    inset={0} 
-                    bg="blackAlpha.600" 
-                    opacity={0} 
-                    _groupHover={{ opacity: 1 }} 
-                    transition="0.2s" 
-                    align="center" 
-                    justify="center" 
-                    direction="column" 
-                    gap={2}
-                  >
-                    <Button size="sm" leftIcon={<AttachmentIcon />} onClick={() => fileInputRef.current?.click()}>
-                      {coverUrl ? 'Заменить' : 'Загрузить'}
-                    </Button>
-                    {coverUrl && <Button size="sm" colorScheme="red" onClick={handleDeleteCover}>Удалить</Button>}
-                  </Flex>
-                )}
-                <input type="file" hidden ref={fileInputRef} onChange={handleUploadCover} accept="image/*" />
-              </Box>
-            </AspectRatio>
+                  {isEditMode && !isUploading && (
+                    <Flex
+                      position="absolute"
+                      inset={0}
+                      bg="blackAlpha.600"
+                      opacity={0}
+                      _groupHover={{ opacity: 1 }}
+                      transition="0.2s"
+                      align="center"
+                      justify="center"
+                      direction="column"
+                      gap={2}
+                    >
+                      <Button size="sm" leftIcon={<AttachmentIcon />} onClick={() => fileInputRef.current?.click()}>
+                        {coverUrl ? 'Заменить' : 'Загрузить'}
+                      </Button>
+                      {coverUrl && <Button size="sm" colorScheme="red" onClick={handleDeleteCover}>Удалить</Button>}
+                    </Flex>
+                  )}
+                  <input type="file" hidden ref={fileInputRef} onChange={handleUploadCover} accept="image/*" />
+                </Box>
+              )
+            }
           </GridItem>
 
           {/* Текст и название */}
@@ -383,6 +422,7 @@ export const CardEditor = () => {
               )}
             </VStack>
           </GridItem>
+          
         </Grid>
 
         {/* Редактор */}
