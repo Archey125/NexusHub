@@ -1,21 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Editor } from '@tiptap/react';
-import { Button, ButtonGroup, Flex, IconButton, Tooltip, useColorModeValue, Box } from '@chakra-ui/react';
+import { Button, ButtonGroup, Flex, IconButton, Tooltip, useColorModeValue, Box,
+ } from '@chakra-ui/react';
 import { 
-  FaBold, FaItalic, FaStrikethrough, 
+  FaBold, FaItalic, FaStrikethrough,
   FaListUl, FaListOl, FaMinus,FaEyeSlash,
   FaUndo, FaRedo, FaLink, FaUnlink,
   FaQuoteRight,
   FaAlignLeft, FaAlignCenter, FaAlignRight,
-  FaImage, FaImages, FaVideo, FaMusic, FaLayerGroup,//Иконки для сложных блоков
+  FaImage, FaImages, FaVideo, FaMusic, FaLayerGroup, //Иконки для сложных блоков
 } from 'react-icons/fa';
+import { useThemeStore } from '../../../store/themeStore';
 
 interface Props {
   editor: Editor | null;
 }
 
 export const MenuBar = ({ editor }: Props) => {
-   const bg = useColorModeValue ('white', 'gray.800');
+  const bg = useColorModeValue('white', 'gray.800');
+  const { accentColor } = useThemeStore();
   
   if (!editor) return null;
 
@@ -40,9 +43,12 @@ export const MenuBar = ({ editor }: Props) => {
 
   return (
     <Box 
-      position="sticky" top="110px" zIndex={9}
+      position="sticky" 
+      top="115px" 
+      zIndex={9}
       bg={bg} 
-      borderBottom="1px solid" borderColor="gray.200"
+      borderBottom="1px solid" 
+      borderColor={`${accentColor}.200`}
       mb={4} pt={2} pb={2}
       boxShadow="sm"
     >
@@ -60,36 +66,42 @@ export const MenuBar = ({ editor }: Props) => {
       >
         
         {/* ТЕКСТ */}
-        <ButtonGroup size="sm" isAttached variant="outline">
+        <ButtonGroup size="sm" isAttached variant="outline" colorScheme={accentColor}>
           <IconButton aria-label="bold" icon={<FaBold />} variant={isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()} />
           <IconButton aria-label="italic" icon={<FaItalic />} variant={isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()} />
           <IconButton aria-label="strike" icon={<FaStrikethrough />} variant={isActive('strike')} onClick={() => editor.chain().focus().toggleStrike().run()} />
         </ButtonGroup>
 
         {/* ЗАГОЛОВКИ */}
-        <ButtonGroup size="sm" isAttached variant="outline">
+        <ButtonGroup size="sm" isAttached variant="outline" colorScheme={accentColor}>
           <Button variant={isActive('heading', { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>H2</Button>
           <Button variant={isActive('heading', { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>H3</Button>
         </ButtonGroup>
 
         {/* ВЫРАВНИВАНИЕ (НОВОЕ) */}
-        <ButtonGroup size="sm" isAttached variant="outline">
+        <ButtonGroup size="sm" isAttached variant="outline" colorScheme={accentColor}>
            <IconButton aria-label="left" icon={<FaAlignLeft />} variant={isActive({ textAlign: 'left' })} onClick={() => editor.chain().focus().setTextAlign('left').run()} />
            <IconButton aria-label="center" icon={<FaAlignCenter />} variant={isActive({ textAlign: 'center' })} onClick={() => editor.chain().focus().setTextAlign('center').run()} />
            <IconButton aria-label="right" icon={<FaAlignRight />} variant={isActive({ textAlign: 'right' })} onClick={() => editor.chain().focus().setTextAlign('right').run()} />
         </ButtonGroup>
 
         {/* СПИСКИ И ЦИТАТЫ */}
-        <ButtonGroup size="sm" isAttached variant="outline" flexShrink={0}>
+        <ButtonGroup size="sm" isAttached variant="outline" flexShrink={0} colorScheme={accentColor}>
           <IconButton aria-label="bullet" icon={<FaListUl />} variant={isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()} />
           <IconButton aria-label="ordered" icon={<FaListOl />} variant={isActive('orderedList')} onClick={() => editor.chain().focus().toggleOrderedList().run()} />
           <IconButton aria-label="quote" icon={<FaQuoteRight />} variant={isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()} />
         </ButtonGroup>
 
         {/* РАЗДЕЛИТЕЛЬ, СПОЙЛЕР И ССЫЛКА*/}
-        <ButtonGroup size="sm" isAttached variant="outline">
-          <Tooltip label="Линия"><IconButton aria-label="hr" icon={<FaMinus />} onClick={() => editor.chain().focus().setHorizontalRule().run()} /></Tooltip>
-
+        <ButtonGroup size="sm" isAttached variant="outline" flexShrink={0} colorScheme={accentColor}>
+          <Tooltip label="Линия">
+            <IconButton 
+              aria-label="Линия" 
+              icon={<FaMinus />} 
+              variant={isActive('line')} 
+              onClick={() => editor.chain().focus().setHorizontalRule().run()} />
+          </Tooltip>
+          
           <Tooltip label="Спойлер">
             <IconButton 
               aria-label="spoiler" 
@@ -120,7 +132,7 @@ export const MenuBar = ({ editor }: Props) => {
         </ButtonGroup>
 
         {/* СЛОЖНЫЕ БЛОКИ */}
-        <ButtonGroup size="sm" isAttached variant="outline" flexShrink={0}>
+        <ButtonGroup size="sm" isAttached variant="outline" flexShrink={0} colorScheme={accentColor}>
           <Tooltip label="Картинка">
              <IconButton aria-label="img" icon={<FaImage />} onClick={() => editor.chain().focus().insertContent({ type: 'imageBlock' }).run()} />
           </Tooltip>
@@ -139,7 +151,7 @@ export const MenuBar = ({ editor }: Props) => {
         </ButtonGroup>
 
 
-        <ButtonGroup size="sm" isAttached variant="outline" ml="auto">
+        <ButtonGroup size="sm" isAttached variant="outline" ml="auto" colorScheme={accentColor}>
           <IconButton aria-label="undo" icon={<FaUndo />} onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()} />
           <IconButton aria-label="redo" icon={<FaRedo />} onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().redo()} />
         </ButtonGroup>

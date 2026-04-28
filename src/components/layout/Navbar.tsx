@@ -100,6 +100,7 @@ export const Navbar = () => {
               icon={<HamburgerIcon />} 
               variant="outline" 
               size="sm" 
+              colorScheme={accentColor}
               onClick={toggleMobileMenu} 
               aria-label="Toggle Navigation"
             />
@@ -115,28 +116,28 @@ export const Navbar = () => {
             spacing={4} 
             pb={4} 
             pt={2}
-            maxH="90vh" 
+            maxH="80vh" 
             overflowY="auto"
             zIndex={9999}
           >
             {user && (
               <>
-                <Text fontWeight="bold" color="gray.500" fontSize="sm">Страницы</Text>
+                <Text fontWeight="bold" color={`${accentColor}.500`} fontSize="sm" textAlign="center">Страницы</Text>
                 {pages?.map((page) => (
                   <NavLink key={page.id} to={`/page/${page.id}`} onClick={toggleMobileMenu}>
-                    <Button w="100%" justifyContent="flex-start" variant="ghost" colorScheme={accentColor}>
+                    <Button w="100%" justifyContent="center" variant="ghost" colorScheme={accentColor}>
                       {page.title}
                     </Button>
                   </NavLink>
                 ))}
-                <Button w="100%" justifyContent="flex-start" leftIcon={<AddIcon />} onClick={() => { onAddOpen(); toggleMobileMenu(); }} color={`${accentColor}.500`} variant="ghost">
+                <Button w="100%" justifyContent="center" leftIcon={<AddIcon />} onClick={() => { onAddOpen(); toggleMobileMenu(); }} color={`${accentColor}.500`} variant="ghost">
                   Новая страница
                 </Button>
                 <Divider />
               </>
             )}
 
-            <Text fontWeight="bold" color="gray.500" fontSize="sm">Тема и Акцент</Text>
+            <Text fontWeight="bold" color={`${accentColor}.500`} textAlign="center" fontSize="sm">Тема и Акцент</Text>
             <IconButton w="100%" justifyContent="center" onClick={toggleColorMode} icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />} variant="ghost" aria-label="Theme"  color={accentColor}/>
             <Flex p={2} gap={2} wrap="wrap">
                {COLORS.map((c) => (
@@ -148,11 +149,11 @@ export const Navbar = () => {
             
             {user ? (
               <>
-                <Button w="100%" justifyContent="flex-start" variant="ghost">Профиль</Button>
-                <Button w="100%" justifyContent="flex-start" variant="ghost" colorScheme="red" onClick={signOut}>Выйти</Button>
+                <Button w="100%" justifyContent="center" variant="ghost">Профиль</Button>
+                <Button w="100%" justifyContent="center" variant="ghost" colorScheme="red" onClick={signOut}>Выйти</Button>
               </>
             ) : (
-              <Button w="100%" justifyContent="flex-start" onClick={() => { navigate('/login'); toggleMobileMenu(); }} colorScheme="blue" variant="ghost">Войти</Button>
+              <Button w="100%" justifyContent="center" onClick={() => { navigate('/login'); toggleMobileMenu(); }} colorScheme="blue" variant="ghost">Войти</Button>
             )}
           </VStack>
         </Collapse>

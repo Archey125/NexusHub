@@ -427,13 +427,20 @@ export const CardEditor = () => {
 
         {/* Редактор */}
         <Box mt={8}>
+          {/* Меню */}
           {isEditMode && <MenuBar editor={editor} />}
+
           <Box
-            border={isEditMode ? '1px solid' : 'none'} borderColor="gray.200" borderRadius="md"
+            border={isEditMode ? '1px solid' : 'none'} 
+            borderColor="gray.200" 
+            borderRadius="md"
             className="tiptap-editor-container"
           >
+
             <EditorContent editor={editor} />
           </Box>
+          
+
         </Box>
 
         {/* Глобальный спиннер сорхранения */}
