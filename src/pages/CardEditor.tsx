@@ -74,7 +74,6 @@ export const CardEditor = () => {
       CardCarouselNode,
     ],
     content: '',
-    editable: isEditMode,
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none',
@@ -140,11 +139,6 @@ export const CardEditor = () => {
       }, 0);
     }
   }, [card, editor]);
-
-  // синхронизация режима
-  useEffect(() => {
-    if (editor) editor.setEditable(isEditMode);
-  }, [isEditMode, editor]);
 
   // сохранение данных
   const updateMutation = useMutation({

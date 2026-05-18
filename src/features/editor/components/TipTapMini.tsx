@@ -71,23 +71,25 @@ export const TipTapMini = ({ content, onChange }: Props) => {
       className="tiptap-editor-container"
       height="300px"
       position="relative"
+      overflowY="auto"
+      // скрыть полосу прокрутки
+      css={{
+        '&::-webkit-scrollbar': { display: 'none' },
+        'msOverflowStyle': 'none',
+        'scrollbarWidth': 'none',
+      }}
     >
       {/* Мини-меню Sticky */}
       <Flex
         p={1}
         bg={menuBg}
         borderBottom="1px solid" borderColor={border}
+        position="sticky"
+        top={0}
         wrap="nowrap"
         zIndex={5}
         justify={{ base: 'space-between', md: 'flex-start' }}
         gap={2}
-        overflowY="auto"
-        // скрыть полосу прокрутки
-        css={{
-          '&::-webkit-scrollbar': { display: 'none' },
-          'msOverflowStyle': 'none',
-          'scrollbarWidth': 'none',
-        }}
       >
         <ButtonGroup size="sm" isAttached variant="ghost">
           <IconButton aria-label="bold" icon={<FaBold />} onClick={() => editor.chain().focus().toggleBold().run()} isActive={editor.isActive('bold')} />

@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Editor } from '@tiptap/react';
-import { Button, ButtonGroup, Flex, IconButton, Tooltip, useColorModeValue, Box,
- } from '@chakra-ui/react';
-import { 
+import {
+  Button, ButtonGroup, Flex, IconButton, Tooltip, useColorModeValue, Box,
+} from '@chakra-ui/react';
+import {
   FaBold, FaItalic, FaStrikethrough,
-  FaListUl, FaListOl, FaMinus,FaEyeSlash,
+  FaListUl, FaListOl, FaMinus, FaEyeSlash,
   FaUndo, FaRedo, FaLink, FaUnlink,
   FaQuoteRight,
   FaAlignLeft, FaAlignCenter, FaAlignRight,
@@ -19,10 +20,10 @@ interface Props {
 export const MenuBar = ({ editor }: Props) => {
   const bg = useColorModeValue('white', 'gray.800');
   const { accentColor } = useThemeStore();
-  
+
   if (!editor) return null;
 
-  const isActive = (typeOrAttrs: any , opts?: any) => editor.isActive(typeOrAttrs, opts) ? 'solid' : 'ghost';
+  const isActive = (typeOrAttrs: any, opts?: any) => editor.isActive(typeOrAttrs, opts) ? 'solid' : 'ghost';
 
   //настройка ссылки
   const setLink = () => {
@@ -42,21 +43,21 @@ export const MenuBar = ({ editor }: Props) => {
   };
 
   return (
-    <Box 
-      position="sticky" 
-      top="115px" 
+    <Box
+      position="sticky"
+      top="115px"
       zIndex={9}
-      bg={bg} 
-      borderBottom="1px solid" 
+      bg={bg}
+      borderBottom="1px solid"
       borderColor={`${accentColor}.200`}
       mb={4} pt={2} pb={2}
       boxShadow="sm"
     >
-      <Flex 
-        gap={2} 
+      <Flex
+        gap={2}
         wrap="nowrap" // все в одну линию
         overflowX="auto"
-         // скрыть полосу прокрутки
+        // скрыть полосу прокрутки
         css={{
           '&::-webkit-scrollbar': { display: 'none' },
           'msOverflowStyle': 'none',
@@ -64,7 +65,6 @@ export const MenuBar = ({ editor }: Props) => {
         }}
         px={2}
       >
-        
         {/* ТЕКСТ */}
         <ButtonGroup size="sm" isAttached variant="outline" colorScheme={accentColor}>
           <IconButton aria-label="bold" icon={<FaBold />} variant={isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()} />
@@ -80,9 +80,9 @@ export const MenuBar = ({ editor }: Props) => {
 
         {/* ВЫРАВНИВАНИЕ (НОВОЕ) */}
         <ButtonGroup size="sm" isAttached variant="outline" colorScheme={accentColor}>
-           <IconButton aria-label="left" icon={<FaAlignLeft />} variant={isActive({ textAlign: 'left' })} onClick={() => editor.chain().focus().setTextAlign('left').run()} />
-           <IconButton aria-label="center" icon={<FaAlignCenter />} variant={isActive({ textAlign: 'center' })} onClick={() => editor.chain().focus().setTextAlign('center').run()} />
-           <IconButton aria-label="right" icon={<FaAlignRight />} variant={isActive({ textAlign: 'right' })} onClick={() => editor.chain().focus().setTextAlign('right').run()} />
+          <IconButton aria-label="left" icon={<FaAlignLeft />} variant={isActive({ textAlign: 'left' })} onClick={() => editor.chain().focus().setTextAlign('left').run()} />
+          <IconButton aria-label="center" icon={<FaAlignCenter />} variant={isActive({ textAlign: 'center' })} onClick={() => editor.chain().focus().setTextAlign('center').run()} />
+          <IconButton aria-label="right" icon={<FaAlignRight />} variant={isActive({ textAlign: 'right' })} onClick={() => editor.chain().focus().setTextAlign('right').run()} />
         </ButtonGroup>
 
         {/* СПИСКИ И ЦИТАТЫ */}
@@ -95,36 +95,36 @@ export const MenuBar = ({ editor }: Props) => {
         {/* РАЗДЕЛИТЕЛЬ, СПОЙЛЕР И ССЫЛКА*/}
         <ButtonGroup size="sm" isAttached variant="outline" flexShrink={0} colorScheme={accentColor}>
           <Tooltip label="Линия">
-            <IconButton 
-              aria-label="Линия" 
-              icon={<FaMinus />} 
-              variant={isActive('line')} 
+            <IconButton
+              aria-label="Линия"
+              icon={<FaMinus />}
+              variant={isActive('line')}
               onClick={() => editor.chain().focus().setHorizontalRule().run()} />
           </Tooltip>
-          
+
           <Tooltip label="Спойлер">
-            <IconButton 
-              aria-label="spoiler" 
-              icon={<FaEyeSlash />} 
-              variant={isActive('spoiler')} 
-              onClick={() => editor.chain().focus().toggleMark('spoiler').run()} 
+            <IconButton
+              aria-label="spoiler"
+              icon={<FaEyeSlash />}
+              variant={isActive('spoiler')}
+              onClick={() => editor.chain().focus().toggleMark('spoiler').run()}
             />
           </Tooltip>
 
           <Tooltip label="Ссылка">
-            <IconButton 
-              aria-label="link" 
-              icon={<FaLink />} 
-              variant={isActive('link')} 
-              onClick={setLink} 
+            <IconButton
+              aria-label="link"
+              icon={<FaLink />}
+              variant={isActive('link')}
+              onClick={setLink}
             />
           </Tooltip>
           {editor.isActive('link') && (
             <Tooltip label="Убрать ссылку">
-              <IconButton 
-                aria-label="unlink" 
-                icon={<FaUnlink />} 
-                onClick={() => editor.chain().focus().unsetLink().run()} 
+              <IconButton
+                aria-label="unlink"
+                icon={<FaUnlink />}
+                onClick={() => editor.chain().focus().unsetLink().run()}
               />
             </Tooltip>
           )}
@@ -134,13 +134,13 @@ export const MenuBar = ({ editor }: Props) => {
         {/* СЛОЖНЫЕ БЛОКИ */}
         <ButtonGroup size="sm" isAttached variant="outline" flexShrink={0} colorScheme={accentColor}>
           <Tooltip label="Картинка">
-             <IconButton aria-label="img" icon={<FaImage />} onClick={() => editor.chain().focus().insertContent({ type: 'imageBlock' }).run()} />
+            <IconButton aria-label="img" icon={<FaImage />} onClick={() => editor.chain().focus().insertContent({ type: 'imageBlock' }).run()} />
           </Tooltip>
           <Tooltip label="Галерея">
-             <IconButton aria-label="gallery" icon={<FaImages />} onClick={() => editor.chain().focus().insertContent({ type: 'galleryBlock' }).run()} />
+            <IconButton aria-label="gallery" icon={<FaImages />} onClick={() => editor.chain().focus().insertContent({ type: 'galleryBlock' }).run()} />
           </Tooltip>
           <Tooltip label="Аудио">
-             <IconButton aria-label="audio" icon={<FaMusic />} onClick={() => editor.chain().focus().insertContent({ type: 'audioBlock' }).run()} />
+            <IconButton aria-label="audio" icon={<FaMusic />} onClick={() => editor.chain().focus().insertContent({ type: 'audioBlock' }).run()} />
           </Tooltip>
           <Tooltip label="Видео">
             <IconButton aria-label="video" icon={<FaVideo />} onClick={() => editor.chain().focus().insertContent({ type: 'videoBlock' }).run()} />
@@ -150,7 +150,7 @@ export const MenuBar = ({ editor }: Props) => {
           </Tooltip>
         </ButtonGroup>
 
-
+        {/* СТРЕЛКИ */}
         <ButtonGroup size="sm" isAttached variant="outline" ml="auto" colorScheme={accentColor}>
           <IconButton aria-label="undo" icon={<FaUndo />} onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()} />
           <IconButton aria-label="redo" icon={<FaRedo />} onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().redo()} />
