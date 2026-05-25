@@ -12,6 +12,7 @@ import {
   FaImage, FaImages, FaVideo, FaMusic, FaLayerGroup, //Иконки для сложных блоков
 } from 'react-icons/fa';
 import { useThemeStore } from '../../../store/themeStore';
+import { TableMenu } from './TableMenu';
 
 interface Props {
   editor: Editor | null;
@@ -148,6 +149,8 @@ export const MenuBar = ({ editor }: Props) => {
           <Tooltip label="Связанные карточки">
             <IconButton aria-label="cards" icon={<FaLayerGroup />} onClick={() => editor.chain().focus().insertContent({ type: 'cardCarouselBlock' }).run()} />
           </Tooltip>
+
+          <TableMenu editor={editor} />
         </ButtonGroup>
 
         {/* СТРЕЛКИ */}

@@ -32,6 +32,12 @@ import { GalleryNode } from '../features/editor/extensions/GalleryNode';
 import { VideoNode } from '../features/editor/extensions/VideoNode';
 import { AudioNode } from '../features/editor/extensions/AudioNode';
 import { CardCarouselNode } from '../features/editor/extensions/CardCarouselNode';
+import { TableNode } from '../features/editor/extensions/TableNode';
+
+// Таблица
+import TableRow from '@tiptap/extension-table-row';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
 
 const slideVariants = {
   hidden: { opacity: 0, y: -20 },
@@ -63,6 +69,10 @@ export const CardEditor = () => {
   const editor = useEditor({
     extensions: [
       StarterKit,
+      TableNode,
+      TableRow,
+      TableHeader,
+      TableCell,
       Placeholder.configure({ placeholder: 'Начните писать...' }),
       TextAlign.configure({ types: ['heading', 'paragraph', 'image'] }),
       Link.configure({ openOnClick: false, autolink: true }),
@@ -430,8 +440,9 @@ export const CardEditor = () => {
             borderRadius="md"
             className="tiptap-editor-container"
           >
+            
+            <EditorContent editor={editor} /> 
 
-            <EditorContent editor={editor} />
           </Box>
           
 
