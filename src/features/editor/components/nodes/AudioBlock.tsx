@@ -34,7 +34,7 @@ export const AudioBlock = (props: any) => {
     enabled: !!selectedPlaylist 
   });
 
-  const isEditable = props.editor.isEditable;
+  const isEditable = useCardStore((state) => state.isEditMode);
 
   const isCurrentPlaying = (trackType === 'playlist' && currentTrack?.id === playlistTrackId) || currentTrack?.url === src;
 

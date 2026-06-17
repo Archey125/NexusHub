@@ -1,6 +1,6 @@
 import { Box, IconButton, Tooltip } from '@chakra-ui/react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface Props {
   children: React.ReactNode;
@@ -17,6 +17,11 @@ export const SpoilerWrapper = ({ children, isSpoiler, isEditable }: Props) => {
   // 2. Мы НЕ в режиме редактирования (в редакторе мы должны видеть контент)
   // 3. Пользователь еще не нажал "открыть" (isOpen)
   const isBlurred = isSpoiler && !isEditable && !isOpen;
+
+  // сборос спойлера при переключении режима редактирования
+  useEffect(() => {
+    setIsOpen(false);
+  }, [isEditable]);
 
   return (
     <Box 

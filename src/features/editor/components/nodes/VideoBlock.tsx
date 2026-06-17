@@ -14,7 +14,7 @@ export const VideoBlock = (props: any) => {
   const [isSelecting, setIsSelecting] = useState(!src);
 
   const addFile = useCardStore((state) => state.addFile);
-  const isEditable = props.editor.isEditable;
+  const isEditable = useCardStore((state) => state.isEditMode);
 
   const borderColor = useColorModeValue('gray.300', 'gray.600');
   const bg = useColorModeValue('gray.50', 'gray.800');

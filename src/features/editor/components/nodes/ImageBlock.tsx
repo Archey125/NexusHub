@@ -12,7 +12,7 @@ export const ImageBlock = (props: any) => {
   
   // функция из стора
   const addFile = useCardStore((state) => state.addFile);
-  const isEditable = props.editor.isEditable;
+  const isEditable = useCardStore((state) => state.isEditMode);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

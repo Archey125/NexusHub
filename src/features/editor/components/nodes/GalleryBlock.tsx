@@ -15,7 +15,7 @@ export const GalleryBlock = (props: any) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const addFile = useCardStore((state) => state.addFile);
-  const isEditable = props.editor.isEditable;
+  const isEditable = useCardStore((state) => state.isEditMode);
 
   const [currentIndex, setCurrentIndex] = useState(0);
 

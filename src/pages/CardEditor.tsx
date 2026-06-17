@@ -53,7 +53,8 @@ export const CardEditor = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [isEditMode, setIsEditMode] = useState(false);
+  const {isEditMode, setIsEditMode } = useCardStore();
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
   const [title, setTitle] = useState('');
@@ -67,6 +68,7 @@ export const CardEditor = () => {
   });
 
   const editor = useEditor({
+    editable: isEditMode,
     extensions: [
       StarterKit,
       TableNode,
@@ -90,6 +92,21 @@ export const CardEditor = () => {
       },
     },
   });
+
+  // синхронизируем состояние TipTap с isEditMode
+  useEffect(() => {
+    if (editor && !editor.isDestroyed) {
+      editor.setEditable(isEditMode);
+
+      // для перерисовки используем пустую транзакцию
+      setTimeout(() => {
+        if (!editor.isDestroyed) {
+          const transaction = editor.state.tr;
+          editor.view.dispatch(transaction);
+        }
+      }, 150);
+    }
+  }, [isEditMode, editor]);
 
   // заполнение метаданных при загрузке
   useEffect(() => {
@@ -143,9 +160,11 @@ export const CardEditor = () => {
 
   // загрузка контента в редактор (JSON)
   useEffect(() => {
-    if (card?.content_json && editor && editor.isEmpty) {
+    if (card?.content_json && editor && !editor.isDestroyed && editor.isEmpty) {
       setTimeout(() => {
-        editor.commands.setContent(card.content_json);
+        if (!editor.isDestroyed) {
+          editor.commands.setContent(card.content_json);
+        }
       }, 0);
     }
   }, [card, editor]);
@@ -159,6 +178,23 @@ export const CardEditor = () => {
       setIsEditMode(false);
     }
   });
+
+  const handleToggleMode = () => {
+    setIsTransitioning(true); // экран загрузки
+
+    // сбрасываем все текстовые спойлеры
+    const openSpoilers = document.querySelectorAll('.spoiler-visible');
+    openSpoilers.forEach((el) => {
+      el.classList.remove('spoiler-visible');
+      el.classList.add('spoiler-blur');
+    });
+
+    // 400мс на красивый переход и перерендеринг узлов
+    setTimeout(() => {
+      setIsEditMode(!isEditMode);
+      setIsTransitioning(false);
+    }, 200); 
+  };
 
   const handleSave = async () => {
     setIsUploading(true);
@@ -288,7 +324,7 @@ export const CardEditor = () => {
           <HStack>
             <FormControl display="flex" alignItems="center">
               <FormLabel mb="0" fontSize="sm" color="gray.500">{isEditMode ? 'Редактор' : 'Чтение'}</FormLabel>
-              <Switch colorScheme={accentColor} isChecked={isEditMode} onChange={(e) => setIsEditMode(e.target.checked)} />
+              <Switch colorScheme={accentColor} isChecked={isEditMode} onChange={() => handleToggleMode()} />
             </FormControl>
 
             {isEditMode && (
@@ -435,11 +471,29 @@ export const CardEditor = () => {
           {isEditMode && <MenuBar editor={editor} />}
 
           <Box
+            position="relative"
             border={isEditMode ? '1px solid' : 'none'} 
             borderColor="gray.200" 
             borderRadius="md"
-            className="tiptap-editor-container"
+            className={`tiptap-editor-container ${isEditMode ? 'is-editing' : ''}`}
           >
+
+            {/* Слой загрузки с размытием */}
+            {isTransitioning && (
+              <Flex
+                position="absolute"
+                inset={0}
+                zIndex={10}
+                justify="center"
+                align="center"
+                bg="blackAlpha.200"
+                _dark={{ bg: "whiteAlpha.100" }}
+                backdropFilter="blur(4px)"
+                borderRadius="md"
+              >
+                <Spinner size="xl" color={`${accentColor}.500`} thickness="4px" speed="0.65s" />
+              </Flex>
+            )}
             
             <EditorContent editor={editor} /> 
 

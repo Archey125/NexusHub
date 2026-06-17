@@ -12,6 +12,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { SpoilerWrapper, SpoilerButton } from '../SpoilerWrapper';
 // для списка категорий
 import { supabase } from '../../../../lib/supabase';
+// для работы с редактором
+import { useCardStore } from '../../../../store/cardStore';
 
 export const CardCarouselBlock = (props: any) => {
   const { cardsData } = props.node.attrs;
@@ -19,7 +21,7 @@ export const CardCarouselBlock = (props: any) => {
   // массив ID для запроса к базе (игнорируем тех, у кого нет ID)
   const cardIds = cardsData?.map((c: any) => c.id).filter(Boolean) || [];
 
-  const isEditable = props.editor.isEditable;
+  const isEditable = useCardStore((state) => state.isEditMode);
   const navigate = useNavigate();
   const { cardId } = useParams<{ cardId: string }>();
 

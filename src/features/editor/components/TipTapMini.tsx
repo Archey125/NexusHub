@@ -41,8 +41,11 @@ export const TipTapMini = ({ content, onChange }: Props) => {
     },
   });
 
+  // синхронизируем состояние с isEditMode
   useEffect(() => {
-    if (editor && content !== editor.getHTML()) {
+    if (!editor || editor.isDestroyed) return; 
+
+    if (content !== editor.getHTML()) {
       if (editor.getText() === '' && content === '') return;
       editor.commands.setContent(content);
     }

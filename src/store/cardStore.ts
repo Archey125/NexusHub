@@ -1,6 +1,10 @@
 import { create } from 'zustand';
 
 interface CardState {
+  // Режим редактирования
+  isEditMode: boolean;
+  setIsEditMode: (mode: boolean) => void;
+
   // Хранилище временных файлов через blob
   pendingFiles: Record<string, File>;
 
@@ -15,6 +19,8 @@ interface CardState {
 }
 
 export const useCardStore = create<CardState>((set, get) => ({
+  isEditMode: false,
+  setIsEditMode: (mode) => set({ isEditMode: mode }),
   pendingFiles: {},
 
   addFile: (blobUrl, file) => set((state) => ({
