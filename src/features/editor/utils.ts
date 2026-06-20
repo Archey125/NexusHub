@@ -134,3 +134,15 @@ export const processContentAndUpload = async (json: any, cardId: string): Promis
 
   return json;
 };
+
+// Извлечение id из URL Cloudinary
+export const extractPublicIdFromUrl = (url: string): string | null => {
+  if (!url.includes('cloudinary.com')) return null;
+  // Cloudinary URL формат
+  const parts = url.split('/upload/');
+  if (parts.length < 2) return null;
+  
+  const pathWithoutVersion = parts[1].replace(/^v\d+\//, ''); // убираем v1234567890/
+  const publicId = pathWithoutVersion.replace(/\.[^/.]+$/, ''); // убираем расширение (.png, .mp3)
+  return publicId;
+};

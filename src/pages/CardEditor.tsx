@@ -25,6 +25,7 @@ import Link from '@tiptap/extension-link';
 import { MenuBar } from '../features/editor/components/MenuBar';
 import { SpoilerMark } from '../features/editor/extensions/SpoilerMark';
 import { TipTapMini } from '../features/editor/components/TipTapMini';
+import { TableOfContents } from '../features/editor/components/TableOfContents';
 
 //Медиа блоки
 import { ImageNode } from '../features/editor/extensions/ImageNode';
@@ -189,7 +190,7 @@ export const CardEditor = () => {
       el.classList.add('spoiler-blur');
     });
 
-    // 400мс на красивый переход и перерендеринг узлов
+    // красивый переход и перерендеринг узлов
     setTimeout(() => {
       setIsEditMode(!isEditMode);
       setIsTransitioning(false);
@@ -494,6 +495,9 @@ export const CardEditor = () => {
                 <Spinner size="xl" color={`${accentColor}.500`} thickness="4px" speed="0.65s" />
               </Flex>
             )}
+
+            {/* Список оглавлений */}
+            <TableOfContents editor={editor} />
             
             <EditorContent editor={editor} /> 
 

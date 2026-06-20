@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { extractPublicIdFromUrl } from '../features/editor/utils';
 
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_PRESET;
@@ -34,6 +35,21 @@ export const uploadFileToStorage = async (file: File, path: string) => {
 };
 
 export const deleteFileFromStorage = async (fileUrl: string) => {
-  console.log('File removed from DB (physical file remains in Cloudinary):', fileUrl);
-  return Promise.resolve();
+  try {
+    const publicId = extractPublicIdFromUrl(fileUrl);
+    if (!publicId) {
+      console.warn('Не удалось извлечь publicId из URL:', fileUrl);
+      return;
+    }
+
+    // вызов серверной функции
+    const { error } = await supabase.functions.invoke('delete-cloudinary-file', {
+      body: { publicId }
+    });
+
+    if (error) throw error;
+    console.log('Файл успешно удален из Cloudinary:', publicId);
+  } catch (error) {
+    console.error('Ошибка при удалении файла из Cloudinary:', error);
+  }
 };
