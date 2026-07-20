@@ -13,6 +13,7 @@ import {
 } from 'react-icons/fa';
 import { useThemeStore } from '../../../store/themeStore';
 import { TableMenu } from './TableMenu';
+import { TemplateMenu } from './TemplateMenu';
 
 interface Props {
   editor: Editor | null;
@@ -150,7 +151,12 @@ export const MenuBar = ({ editor }: Props) => {
             <IconButton aria-label="cards" icon={<FaLayerGroup />} onClick={() => editor.chain().focus().insertContent({ type: 'cardCarouselBlock' }).run()} />
           </Tooltip>
 
+
+          {/* Таблицы */}
           <TableMenu editor={editor} />
+
+          {/* Шаблоны */}
+          <TemplateMenu editor={editor} />
         </ButtonGroup>
 
         {/* СТРЕЛКИ */}
